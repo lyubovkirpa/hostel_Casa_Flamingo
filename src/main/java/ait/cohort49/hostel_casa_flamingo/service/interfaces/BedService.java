@@ -10,9 +10,7 @@ public interface BedService {
 
     Bed getBedById(Long id);
 
-    List<Bed> getAllActiveBeds();
-
-    Bed updateBed(Long id, Bed bed);
+    List<Bed> getAllBeds();
 
     void deleteBedById(Long id);
 

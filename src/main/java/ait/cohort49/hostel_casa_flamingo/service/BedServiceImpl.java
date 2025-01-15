@@ -28,22 +28,10 @@ public class BedServiceImpl implements BedService {
     }
 
     @Override
-    public List<Bed> getAllActiveBeds() {
+    public List<Bed> getAllBeds() {
         return bedRepository.findAll();
     }
 
-
-    @Override
-    public Bed updateBed(Long id, Bed bed) {
-        return bedRepository.findById(id)
-                .map(existingBed -> {
-                    existingBed.setNumber(bed.getNumber());
-                    existingBed.setType(bed.getType());
-                    existingBed.setPrice(bed.getPrice());
-                    return bedRepository.save(existingBed);
-                })
-                .orElse(null);
-    }
 
     @Override
     public void deleteBedById(Long id) {

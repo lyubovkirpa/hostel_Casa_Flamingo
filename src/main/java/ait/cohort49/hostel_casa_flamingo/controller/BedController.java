@@ -32,14 +32,9 @@ public class BedController {
     // GET /beds
     @GetMapping()
     public List<Bed> getAll() {
-        return bedService.getAllActiveBeds();
+        return bedService.getAllBeds();
     }
 
-    // PUT  /beds
-    @PostMapping("/{id}")
-    public Bed update(@PathVariable Long id, @RequestBody Bed bed) {
-        return bedService.updateBed(id, bed);
-    }
 
     //DELETE  /beds/id
     @DeleteMapping("/{id}")
