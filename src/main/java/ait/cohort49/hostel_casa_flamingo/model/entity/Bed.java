@@ -17,7 +17,7 @@ public class Bed {
     private Long id;
 
     @Column(name = "bed_number")
-    private int number;
+    private String number;
 
     @Column(name = "bed_type")
     private String type;
@@ -36,15 +36,11 @@ public class Bed {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public int getNumber() {
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
