@@ -1,8 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
-import ait.cohort49.hostel_casa_flamingo.service.RoomService;
-import org.springframework.beans.factory.annotation.Autowired;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,10 +15,6 @@ public class RoomController {
 
     private final RoomService roomService;
 
-    /**
-     * Внедрение зависимости RoomService.
-     */
-    @Autowired
     public RoomController(RoomService roomService) {
         this.roomService = roomService;
     }
@@ -45,7 +40,7 @@ public class RoomController {
      */
     @PostMapping
     public Room createRoom(@RequestBody Room room) {
-        return roomService.createRoom(room);
+        return roomService.createRoom();
     }
 
     /**
@@ -53,7 +48,7 @@ public class RoomController {
      */
     @PutMapping("/{id}")
     public Room updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        return roomService.updateRoom(id, room);
+        return roomService.updateRoom(id);
     }
 
     /**

@@ -3,7 +3,6 @@ package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,17 +12,9 @@ import java.util.List;
  * Здесь размещается бизнес-логика (проверки, дополнительные расчёты и т.д.).
  */
 @Service
-public class RoomService {
+public class OldRoomService {
 
     private final RoomRepository roomRepository;
-
-    /**
-     * Внедрение RoomRepository через конструктор.
-     */
-    @Autowired
-    public RoomService(RoomRepository roomRepository) {
-        this.roomRepository = roomRepository;
-    }
 
     /**
      * Получить все комнаты.
