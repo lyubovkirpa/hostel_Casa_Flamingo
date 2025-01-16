@@ -1,4 +1,4 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -6,23 +6,18 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Entity
-@Table(name = "bed")
+
 @Schema(description = "Class that describes Bed")
-public class Bed {
+public class BedDto {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "bed_number")
     private String number;
 
-    @Column(name = "bed_type")
     private String type;
 
-    @Column(name = "bed_price")
     private BigDecimal price;
 
 
@@ -36,7 +31,9 @@ public class Bed {
         return id;
     }
 
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getNumber() {
         return number;
@@ -66,15 +63,12 @@ public class Bed {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bed bed = (Bed) o;
+        BedDto bed = (BedDto) o;
         return number == bed.number && Objects.equals(id, bed.id) && Objects.equals(type, bed.type) && Objects.equals(price, bed.price);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, number, type, price);
-    }
-
-    public void setId(Long id) {
     }
 }
