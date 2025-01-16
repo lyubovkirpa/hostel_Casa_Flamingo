@@ -31,10 +31,6 @@ public class BedDto {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getNumber() {
         return number;
     }
@@ -63,12 +59,12 @@ public class BedDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BedDto bed = (BedDto) o;
-        return number == bed.number && Objects.equals(id, bed.id) && Objects.equals(type, bed.type) && Objects.equals(price, bed.price);
+        BedDto bedDto = (BedDto) o;
+        return Objects.equals(id, bedDto.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, type, price);
+        return Objects.hashCode(id);
     }
 }
