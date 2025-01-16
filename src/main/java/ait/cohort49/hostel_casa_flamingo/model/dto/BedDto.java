@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -10,25 +9,18 @@ import java.util.Objects;
 @Schema(description = "Class that describes Bed")
 public class BedDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String number;
-
     private String type;
-
     private BigDecimal price;
 
 
-    @Override
-    public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNumber() {
@@ -66,5 +58,11 @@ public class BedDto {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
+                id, number, type, price);
     }
 }
