@@ -67,14 +67,11 @@ public class Bed {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Bed bed = (Bed) o;
-        return number == bed.number && Objects.equals(id, bed.id) && Objects.equals(type, bed.type) && Objects.equals(price, bed.price);
+        return Objects.equals(id, bed.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, type, price);
-    }
-
-    public void setId(Long id) {
+        return Objects.hashCode(id);
     }
 }
