@@ -1,34 +1,18 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
+package ait.cohort49.hostel_casa_flamingo.service;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
-@Entity
-@Table(name = "bed")
+
 @Schema(description = "Class that describes Bed")
-public class Bed {
+public class BedGetDto {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "bed_number")
     private String number;
-
-    @Column(name = "bed_type")
     private String type;
-
-    @Column(name = "bed_price")
     private BigDecimal price;
 
-
-    public Long getId() {
-        return id;
-    }
 
     public String getNumber() {
         return number;
@@ -58,18 +42,18 @@ public class Bed {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Bed bed = (Bed) o;
-        return Objects.equals(id, bed.id);
+        BedGetDto bedGetDto = (BedGetDto) o;
+        return Objects.equals(number, bedGetDto.number) && Objects.equals(type, bedGetDto.type) && Objects.equals(price, bedGetDto.price);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(number, type, price);
     }
 
     @Override
     public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
+        return String.format("Bed: number - %s, type - %s, price - %s",
+                number, type, price);
     }
 }
