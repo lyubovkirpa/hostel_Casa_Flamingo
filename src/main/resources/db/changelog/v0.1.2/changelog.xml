@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -6,9 +7,11 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
 
-    <include file="v0.1.0/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v0.1.1/changelog.xml" relativeToChangelogFile="true"/>
-    <include file="v0.1.2/changelog.xml" relativeToChangelogFile="true"/>
+    <changeSet id="add-tag-0.1.2" author="LiubovK">
+        <tagDatabase tag="v0.1.2"/>
+    </changeSet>
+
+    <include file="modify-column-type.xml" relativeToChangelogFile="true"/>
 
 
 </databaseChangeLog>

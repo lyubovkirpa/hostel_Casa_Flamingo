@@ -1,7 +1,9 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 
-import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
+import ait.cohort49.hostel_casa_flamingo.service.BedGetDto;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,33 +12,43 @@ import java.util.List;
 @RequestMapping("/beds")
 public class BedController {
 
-    // POST  /beds
+    private final BedService bedService;
+
+    public BedController(BedService bedService) {
+        this.bedService = bedService;
+    }
+
+    /**
+     * POST  /beds
+     */
     @PostMapping
-    public Bed saveBed(@RequestBody Bed bed) {
-        return bed;
+    public BedDto saveBed(@RequestBody BedGetDto bedGetDto) {
+        return bedService.saveBed(bedGetDto);
     }
 
-    // GET /beds/id
+    /**
+     * GET /beds/id
+     */
     @GetMapping("/{id}")
-    public Bed getById(@PathVariable("id") Long id) {
-        return null;
+    public BedDto getById(@PathVariable("id") Long id) {
+        return bedService.getBedById(id);
     }
 
-    // GET /beds
+    /**
+     * GET /beds
+     */
     @GetMapping()
-    public List<Bed> getAll() {
-        return List.of();
+    public List<BedDto> getAll() {
+        return bedService.getAllBeds();
     }
 
-    // PUT  /beds
-    @PostMapping("/{id}")
-    public Bed update(@PathVariable Long id, @RequestBody Bed bed) {
-        return bed;
-    }
 
-    //DELETE  /beds/id
+    /**
+     * DELETE  /beds/id
+     */
     @DeleteMapping("/{id}")
-    public Bed remove(@PathVariable Long id) {
-        return null;
+    public void remove(@PathVariable Long id) {
+        bedService.deleteBedById(id);
     }
+
 }
