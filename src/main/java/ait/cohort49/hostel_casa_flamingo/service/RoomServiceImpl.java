@@ -1,7 +1,12 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
+import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
+import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
+import ait.cohort49.hostel_casa_flamingo.service.mapping.RoomMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -9,38 +14,43 @@ import java.util.List;
 
 @Service
 public class RoomServiceImpl implements RoomService {
-    @Override
-    public List<Room> getAllRooms() {
-        return List.of();
-    }
 
-    @Override
-    public Room getRoomById(Long id) {
-        return null;
-    }
+    private final RoomRepository roomRepository;
+    private final RoomMappingService roomMappingService;
 
-    @Override
-    public Room createRoom(Long id) {
-        return null;
-    }
+    public RoomServiceImpl(RoomRepository roomRepository, RoomMappingService roomMappingService) {
+        this.roomRepository = roomRepository;
+        this.roomMappingService = roomMappingService;
 
-    @Override
-    public Room deleteRoom(Long id) {
-        return null;
-    }
+        @Override
+        public RoomDto getRoomById (Long id){
+            Room room = getRoomById();
+            return roomMappingService.mapEntityToDto(room);
+        }
 
-    @Override
-    public Room updateRoom(Long id) {
-        return null;
-    }
+        @Override
+        public List<RoomDto> getAllRooms () {
+            return roomRepository.getAllRooms()
+                    .stream()
+                    .map(roomMappingService::mapEntityToDto)
+                    .toList();
+        }
 
-    @Override
-    public long getRoomCount() {
-        return 0;
-    }
+        @Override
+        public RoomDto createRoom (Long id){
+            Room room = getRoomById();
+            return roomMappingService.mapEntityToDto(room);
+        }
 
-    @Override
-    public BigDecimal getTotalPrice() {
-        return null;
+        @Override
+        public RoomDto updateRoom (Long id){
+           return roomRepository.updateRoom(id);
+        }
+
+        @Override
+        public void deleteRoom(Long id) {
+            deleteRoom(Long id);
+            roomRepository.deleteById(id);
+        }
     }
 }

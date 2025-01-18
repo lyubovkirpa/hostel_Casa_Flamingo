@@ -1,14 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Контроллер для обработки HTTP-запросов (CRUD-операций) с сущностью Room.
- */
+
 @RestController
 @RequestMapping("/rooms")
 public class RoomController {
@@ -23,23 +22,23 @@ public class RoomController {
      * Получить список всех комнат (GET /rooms).
      */
     @GetMapping
-    public List<Room> getAllRooms() {
-        return roomService.findAllRooms();
+    public List<RoomDto> getAllRooms() {
+        return roomService.getAllRooms();
     }
 
     /**
      * Найти комнату по ID (GET /rooms/{id}).
      */
     @GetMapping("/{id}")
-    public Room getRoomById(@PathVariable Long id) {
-        return roomService.findRoomById(id);
+    public RoomDto getRoomById(@PathVariable Long id) {
+        return roomService.getRoomById(Long id);
     }
 
     /**
      * Создать новую комнату (POST /rooms).
      */
     @PostMapping
-    public Room createRoom(@RequestBody Room room) {
+    public RoomDto createRoom(@RequestBody RoomDto room) {
         return roomService.createRoom();
     }
 
@@ -47,8 +46,8 @@ public class RoomController {
      * Обновить комнату (PUT /rooms/{id}).
      */
     @PutMapping("/{id}")
-    public Room updateRoom(@PathVariable Long id, @RequestBody Room room) {
-        return roomService.updateRoom(id);
+    public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto room) {
+        return roomService.updateRoom(Long id);
     }
 
     /**
