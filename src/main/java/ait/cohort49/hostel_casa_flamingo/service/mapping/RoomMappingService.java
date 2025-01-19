@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Mapper(componentModel = "spring")
 public interface RoomMappingService {
 
-    Room mapDtoToEntity(RoomDto dto);
+    Room mapDtoToEntity(RoomDto roomDto);
 
     RoomDto mapEntityToDto(Room entity);
 }

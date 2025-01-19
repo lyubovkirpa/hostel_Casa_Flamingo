@@ -31,24 +31,24 @@ public class RoomController {
      */
     @GetMapping("/{id}")
     public RoomDto getRoomById(@PathVariable Long id) {
-        return roomService.getRoomById(Long id);
+        return roomService.getRoomById(id);
     }
 
     /**
      * Создать новую комнату (POST /rooms).
      */
     @PostMapping
-    public RoomDto createRoom(@RequestBody RoomDto room) {
-        return roomService.createRoom();
+    public RoomDto createRoom(@RequestBody RoomDto roomDto) {
+        return roomService.createRoom(roomDto);
     }
 
-    /**
-     * Обновить комнату (PUT /rooms/{id}).
-     */
-    @PutMapping("/{id}")
-    public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto room) {
-        return roomService.updateRoom(Long id);
-    }
+//    /**
+//     * Обновить комнату (PUT /rooms/{id}).
+//     */
+//    @PutMapping("/{id}")
+//    public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto room) {
+//        return roomService.updateRoom(id);
+//    }
 
     /**
      * Удалить комнату (DELETE /rooms/{id}).

@@ -11,11 +11,11 @@ public interface RoomService {
     List<RoomDto> getAllRooms();
 
     RoomDto getRoomById(Long id);
-    RoomDto createRoom(Long id);
-    RoomDto updateRoom(Long id);
+    RoomDto createRoom(RoomDto roomDto);
+   /* RoomDto updateRoom(Long id); */
     void  deleteRoom(Long id);
 
-        long getRoomCount();
-
-        BigDecimal getTotalPrice();
+//        long getRoomCount();
+//
+//        BigDecimal getTotalPrice();
 }
