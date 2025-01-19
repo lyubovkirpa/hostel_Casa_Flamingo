@@ -19,10 +19,7 @@ public class BedController {
         this.bedService = bedService;
     }
 
-    /**
-     * POST  /beds
-     */
-    @PreAuthorize("hasA")
+
     @PostMapping
     public BedDto saveBed(@RequestBody BedGetDto bedGetDto) {
         return bedService.saveBed(bedGetDto);
