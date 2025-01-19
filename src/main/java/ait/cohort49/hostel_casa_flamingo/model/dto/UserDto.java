@@ -1,44 +1,24 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import jakarta.persistence.*;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Table(name = "users")
-public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class UserDto {
+
     private Long id;
-
-    @Column(name = "first_name")
     private String firstName;
-
-    @Column(name = "last_name")
     private String lastName;
-
-    @Column(name = "email", nullable = false, length = 64)
     private String email;
-
-    @Column(name = "tel", nullable = false, length = 15)
     private String tel;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
     private Set<Role> roles = new HashSet<>();
-
-    @Column(name = "password")
     private String password;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     private Cart cart;
 
 
@@ -106,7 +86,7 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
+        UserDto user = (UserDto) o;
         return Objects.equals(id, user.id);
     }
 
