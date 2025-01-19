@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     @Bean
@@ -25,21 +25,15 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http
-
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(ses-> ses.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(ses-> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/beds{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/beds").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
+                        .anyRequest().authenticated()
                 );
         return http.build();
-
-
     }
-
-
 }

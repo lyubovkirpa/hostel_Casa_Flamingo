@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -98,4 +99,6 @@ public class User {
         return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, role - %s",
                 id, firstName, lastName, email, roles == null ? "[]" : roles);
     }
+
+
 }
