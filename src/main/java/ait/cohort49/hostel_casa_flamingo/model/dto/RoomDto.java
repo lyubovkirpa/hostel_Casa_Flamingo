@@ -1,11 +1,13 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
+
+import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Room {
+public class RoomDto {
 
     private Long id;
     private String number;
@@ -53,12 +55,12 @@ public class Room {
         this.id = id;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Room room = (Room) o;
-        return Objects.equals(id, room.id) && Objects.equals(number, room.number) && Objects.equals(type, room.type) && Objects.equals(price, room.price) && Objects.equals(beds, room.beds);
+        if (!(o instanceof RoomDto roomDto)) return false;
+        return Objects.equals(id, roomDto.id) && Objects.equals(number, roomDto.number) && Objects.equals(type, roomDto.type) && Objects.equals(price, roomDto.price) && Objects.equals(beds, roomDto.beds);
     }
 
     @Override
