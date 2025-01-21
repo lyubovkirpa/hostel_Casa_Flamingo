@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
@@ -8,15 +9,15 @@ import java.math.BigDecimal;
 
 public interface CartService {
 
-    Cart getCart(User user);
+    CartDto getCart(User user);
 
-    void addBedToCart(Cart cart, Bed bed);
+    Cart getCartEntity(User authUser);
 
-    void removeBedFromCart(Cart cart, Long id);
+    void addBedToCart(User authUser, Long bedId);
 
-    BigDecimal getTotalPrice(Cart cart);
+    void removeBedFromCart(User authUser, Long bedId);
 
-    void clearCart(Cart cart);
+    BigDecimal getTotalPrice(User authUser);
 
-
+    void clearUserCart(User authUser);
 }

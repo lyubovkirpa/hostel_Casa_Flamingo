@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.service.BedGetDto;
 
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.List;
 public interface BedService {
 
     BedDto saveBed(BedGetDto bedGetDto);
+
+    Bed getBedOrThrow(long id);
 
     BedDto getBedById(Long id);
 

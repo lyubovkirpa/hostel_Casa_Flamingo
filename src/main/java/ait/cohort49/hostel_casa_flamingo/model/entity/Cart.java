@@ -3,10 +3,9 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Entity
 public class Cart {
@@ -22,7 +21,7 @@ public class Cart {
             joinColumns = @JoinColumn(name = "cart_id"),
             inverseJoinColumns = @JoinColumn(name = "bed_id")
     )
-    private List<Bed> beds;
+    private List<Bed> beds = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -30,16 +29,19 @@ public class Cart {
             joinColumns = @JoinColumn(name = "cart_id"),
             inverseJoinColumns = @JoinColumn(name = "room_id")
     )
-    private List<Room> rooms;
+    private List<Room> rooms = new ArrayList<>();
 
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<Bed> getBeds() {
@@ -83,40 +85,5 @@ public class Cart {
     public String toString() {
         return String.format("Cart: id - %d, beds - %s, rooms - %s",
                 this.id, beds == null ? 0 : beds.size(), rooms == null ? 0 : rooms.size());
-    }
-
-
-    public void addBed(Bed bed) {
-        if (bed != null) {
-            beds.add(bed);
-        }
-    }
-
-    public List<Bed> getAllBeds() {
-        return beds.stream()
-                .toList();
-    }
-
-    public Bed removeById(Long id) {
-        Optional<Bed> optionalBed = beds.stream()
-                .filter(b -> b.getId().equals(id))
-                .findFirst();
-        if (optionalBed.isEmpty()) return null;
-
-        Bed bed = optionalBed.get();
-        beds.remove(bed);
-        return bed;
-    }
-
-    public BigDecimal getTotalPrice() {
-        if (beds == null) return BigDecimal.ZERO;
-
-        return beds.stream()
-                .map(Bed::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    public void clear() {
-        beds.clear();
     }
 }

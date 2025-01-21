@@ -1,9 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
+import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
+import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -11,38 +15,58 @@ import java.math.BigDecimal;
 
 @Service
 public class CartServiceImpl implements CartService {
-    @Override
-    public Cart getCart(User user) {
-        return null;
-//        return user.getCart();
+
+    private final BedService bedService;
+    private final CartRepository cartRepository;
+    private final CartMappingService cartMappingService;
+
+    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService) {
+        this.bedService = bedService;
+        this.cartRepository = cartRepository;
+        this.cartMappingService = cartMappingService;
     }
 
     @Override
-    public void addBedToCart(Cart cart, Bed bed) {
-        if (cart != null && bed != null) {
-            cart.addBed(bed);
-        }
+    public CartDto getCart(User authUser) {
+        return cartMappingService.mapEntityToDto(getCartEntity(authUser));
     }
 
     @Override
-    public void removeBedFromCart(Cart cart, Long id) {
-        if (cart != null) {
-            cart.removeById(id);
-        }
+    public Cart getCartEntity(User authUser) {
+        return authUser.getCart();
     }
 
     @Override
-    public BigDecimal getTotalPrice(Cart cart) {
-        if (cart != null) {
-            return cart.getTotalPrice();
-        }
-        return BigDecimal.ZERO;
+    public void addBedToCart(User authUser, Long bedId) {
+        // todo дописать после завершения имплементации security
+        Bed foundBed = bedService.getBedOrThrow(bedId);
+        Cart userCart = getCartEntity(authUser);
+        userCart.getBeds().add(foundBed);
+
+        cartRepository.save(userCart);
     }
 
     @Override
-    public void clearCart(Cart cart) {
-        if (cart != null) {
-            cart.clear();
-        }
+    public void removeBedFromCart(User authUser, Long bedId) {
+        // todo дописать после завершения имплементации security
+        Bed foundBed = bedService.getBedOrThrow(bedId);
+        Cart userCart = getCartEntity(authUser);
+        userCart.getBeds().remove(foundBed);
+
+        cartRepository.save(userCart);
+    }
+
+    @Override
+    public BigDecimal getTotalPrice(User authUser) {
+        // todo дописать после завершения имплементации security
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public void clearUserCart(User authUser) {
+        Cart cartEntity = getCartEntity(authUser);
+        cartEntity.getBeds().clear();
+
+        cartRepository.save(cartEntity);
     }
 }

@@ -27,6 +27,7 @@ public class BedServiceImpl implements BedService {
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 
+    @Override
     public Bed getBedOrThrow(long id) {
         return bedRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bed by id: " + id + " not found"));
