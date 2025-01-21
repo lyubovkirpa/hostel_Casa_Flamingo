@@ -1,6 +1,8 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 import java.math.BigDecimal;
 import java.util.Objects;

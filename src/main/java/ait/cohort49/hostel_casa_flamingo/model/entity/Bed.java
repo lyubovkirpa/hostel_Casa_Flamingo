@@ -8,7 +8,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "bed")
-@Schema(description = "Class that describes Bed")
 public class Bed {
 
     @Id
@@ -25,6 +24,8 @@ public class Bed {
     @Column(name = "bed_price")
     private BigDecimal price;
 
+    @ManyToOne
+    private Room room;
 
     public Long getId() {
         return id;

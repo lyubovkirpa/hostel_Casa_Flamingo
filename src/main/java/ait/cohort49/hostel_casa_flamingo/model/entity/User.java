@@ -1,14 +1,15 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,16 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles;
+    }
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
 
     @Column(name = "password")
     private String password;
@@ -86,9 +97,13 @@ public class User {
         this.roles = roles;
     }
 
+
+
     public String getPassword() {
         return password;
     }
+
+
 
     public void setPassword(String password) {
         this.password = password;
@@ -120,4 +135,6 @@ public class User {
         return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s, cart - %s",
                 id, firstName, lastName, email, tel, roles == null ? "[]" : roles, cart);
     }
+
+
 }
