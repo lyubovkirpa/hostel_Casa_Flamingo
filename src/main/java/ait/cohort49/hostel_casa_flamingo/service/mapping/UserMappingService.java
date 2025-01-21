@@ -5,7 +5,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring", uses = CartMappingService.class)
+@Mapper(componentModel = "spring", uses = {RoleMappingService.class})
 public interface UserMappingService {
 
     @Mapping(target = "id", ignore = true)

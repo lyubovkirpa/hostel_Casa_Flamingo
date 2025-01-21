@@ -1,8 +1,5 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -15,11 +12,8 @@ public class UserDto {
     private String lastName;
     private String email;
     private String tel;
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleDto> roles = new HashSet<>();
     private String password;
-    @JsonManagedReference
-    private CartDto cartDto;
-
 
     public Long getId() {
         return id;
@@ -61,11 +55,11 @@ public class UserDto {
         this.tel = tel;
     }
 
-    public Set<Role> getRoles() {
+    public Set<RoleDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<RoleDto> roles) {
         this.roles = roles;
     }
 
@@ -75,14 +69,6 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public CartDto getCartDto() {
-        return cartDto;
-    }
-
-    public void setCartDto(CartDto cartDto) {
-        this.cartDto = cartDto;
     }
 
     @Override
@@ -100,7 +86,7 @@ public class UserDto {
 
     @Override
     public String toString() {
-        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s, cart - %s",
-                id, firstName, lastName, email, tel, roles == null ? "[]" : roles, cartDto);
+        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s",
+                id, firstName, lastName, email, tel, roles == null ? "[]" : roles);
     }
 }

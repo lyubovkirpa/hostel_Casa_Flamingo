@@ -5,18 +5,25 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
-    <changeSet id="create-table-cart-bed" author="LiubovK">
-        <createTable tableName="cart_bed">
-
+    <changeSet id="create-table-room" author="LiubovK">
+        <createTable tableName="room">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
 
-            <column name="cart_id" type="bigint">
+            <column name="room_number" type="varchar(20)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+
+            <column name="room_type" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
 
-            <column name="bed_id" type="bigint">
+            <column name="room_capacity" type="int">
+                <constraints nullable="false"/>
+            </column>
+
+            <column name="room_price" type="decimal">
                 <constraints nullable="false"/>
             </column>
 
