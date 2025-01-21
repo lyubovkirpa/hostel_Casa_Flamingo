@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
@@ -22,7 +23,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public RoomDto getRoomById(Long id) {
-        Room room = roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room by id: " + id + " not found"));
+        Room room = findByIdOrThrow(id);
         return roomMappingService.mapEntityToDto(room);
     }
 
@@ -35,21 +36,22 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public RoomDto createRoom(RoomDto roomDto) {
-        Room room = roomMappingService.mapDtoToEntity(roomDto);
+    public RoomDto createRoom(CreateOrUpdateRoomDto createRoomDto) {
+        Room room = roomMappingService.mapDtoToEntity(createRoomDto);
         return roomMappingService.mapEntityToDto(roomRepository.save(room));
     }
 
-    /**
-     * public RoomDto updateRoom(Long id) {
-     * return roomRepository.updateRoom(id);
-     * }
-     */
 
     @Override
     public void deleteRoom(Long id) {
-        roomRepository.findById(id).orElseThrow(() -> new RuntimeException("Room by id: " + id + " not found"));
+        findByIdOrThrow(id);
         roomRepository.deleteById(id);
+    }
+
+    @Override
+    public Room findByIdOrThrow(Long id) {
+        return roomRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Room by id: " + id + " not found"));
     }
 
 }

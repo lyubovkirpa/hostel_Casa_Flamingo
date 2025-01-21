@@ -1,17 +1,23 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
+import jakarta.persistence.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Room {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
     private String type;
     private BigDecimal price;
-    List<Bed> beds = new ArrayList<>();
+    @OneToMany (mappedBy = "room")
+    private List<Bed> beds = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -56,13 +62,22 @@ public class Room {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Room room = (Room) o;
-        return Objects.equals(id, room.id) && Objects.equals(number, room.number) && Objects.equals(type, room.type) && Objects.equals(price, room.price) && Objects.equals(beds, room.beds);
+        if (!(o instanceof Room room)) return false;
+        return Objects.equals(id, room.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, type, price, beds);
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Room{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                '}';
     }
 }

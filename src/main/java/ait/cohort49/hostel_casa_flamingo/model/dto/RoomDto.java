@@ -13,7 +13,7 @@ public class RoomDto {
     private String number;
     private String type;
     private BigDecimal price;
-    List<Bed> beds = new ArrayList<>();
+    private List<BedDto> beds = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -23,11 +23,11 @@ public class RoomDto {
         this.type = type;
     }
 
-    public List<Bed> getBeds() {
+    public List<BedDto> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<Bed> beds) {
+    public void setBeds(List<BedDto> beds) {
         this.beds = beds;
     }
 

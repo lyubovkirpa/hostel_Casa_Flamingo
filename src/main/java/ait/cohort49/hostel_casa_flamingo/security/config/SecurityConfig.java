@@ -32,6 +32,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/rooms").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/rooms/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();

@@ -1,7 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
-import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,17 +38,9 @@ public class RoomController {
      * Создать новую комнату (POST /rooms).
      */
     @PostMapping
-    public RoomDto createRoom(@RequestBody RoomDto roomDto) {
+    public RoomDto createRoom(@RequestBody CreateOrUpdateRoomDto roomDto) {
         return roomService.createRoom(roomDto);
     }
-
-//    /**
-//     * Обновить комнату (PUT /rooms/{id}).
-//     */
-//    @PutMapping("/{id}")
-//    public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto room) {
-//        return roomService.updateRoom(id);
-//    }
 
     /**
      * Удалить комнату (DELETE /rooms/{id}).
