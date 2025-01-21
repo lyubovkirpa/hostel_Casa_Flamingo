@@ -8,8 +8,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5433/hostel_Casa_Flamingo
-    username: postgres
-    password: paSSword
+    username: my_user
+    password: pos1234
     driver-class-name: org.postgresql.Driver
   application:
     name: Hostel_Casa_Flamingo
