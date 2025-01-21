@@ -8,15 +8,15 @@ import java.math.BigDecimal;
 
 public interface CartService {
 
-    public Cart getCart(User user);
+    Cart getCart(User user);
 
-    public void addBedToCart(Cart cart, Bed bed);
+    void addBedToCart(Cart cart, Bed bed);
 
-    public void removeBedFromCart(Cart cart, Long id);
+    void removeBedFromCart(Cart cart, Long id);
 
-    public BigDecimal getTotalPrice(Cart cart);
+    BigDecimal getTotalPrice(Cart cart);
 
-    public void clearCart(Cart cart);
+    void clearCart(Cart cart);
 
 
 }
