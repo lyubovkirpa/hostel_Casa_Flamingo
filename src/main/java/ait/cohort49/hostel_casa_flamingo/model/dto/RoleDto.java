@@ -1,24 +1,19 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
-
-import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import java.util.Objects;
 
-@Entity
-@Table(name = "role")
-public class Role implements GrantedAuthority {
+public class RoleDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "title")
     private String title;
+
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -33,8 +28,8 @@ public class Role implements GrantedAuthority {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(id, role.id);
+        RoleDto roleDto = (RoleDto) o;
+        return Objects.equals(id, roleDto.id);
     }
 
     @Override
@@ -45,10 +40,5 @@ public class Role implements GrantedAuthority {
     @Override
     public String toString() {
         return String.format("Role: id - %d, name - %s", id, title);
-    }
-
-    @Override
-    public String getAuthority() {
-        return title;
     }
 }

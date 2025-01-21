@@ -1,23 +1,19 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import jakarta.persistence.*;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Entity
-public class Room {
+public class RoomDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String number;
     private String type;
     private BigDecimal price;
-    @OneToMany (mappedBy = "room")
-    private List<Bed> beds = new ArrayList<>();
+    private List<BedDto> beds = new ArrayList<>();
 
     public String getType() {
         return type;
@@ -27,11 +23,11 @@ public class Room {
         this.type = type;
     }
 
-    public List<Bed> getBeds() {
+    public List<BedDto> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<Bed> beds) {
+    public void setBeds(List<BedDto> beds) {
         this.beds = beds;
     }
 
@@ -59,25 +55,16 @@ public class Room {
         this.id = id;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Room room)) return false;
-        return Objects.equals(id, room.id);
+        if (!(o instanceof RoomDto roomDto)) return false;
+        return Objects.equals(id, roomDto.id) && Objects.equals(number, roomDto.number) && Objects.equals(type, roomDto.type) && Objects.equals(price, roomDto.price) && Objects.equals(beds, roomDto.beds);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Room{" +
-                "id=" + id +
-                ", number='" + number + '\'' +
-                ", type='" + type + '\'' +
-                ", price=" + price +
-                '}';
+        return Objects.hash(id, number, type, price, beds);
     }
 }
