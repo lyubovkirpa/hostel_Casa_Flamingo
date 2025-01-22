@@ -38,28 +38,34 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addBedToCart(User authUser, Long bedId) {
-        // todo дописать после завершения имплементации security
+
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
-        userCart.getBeds().add(foundBed);
 
-        cartRepository.save(userCart);
+        if (!userCart.getBeds().contains(foundBed)) {
+            userCart.getBeds().add(foundBed);
+            cartRepository.save(userCart);
+        }
     }
 
     @Override
     public void removeBedFromCart(User authUser, Long bedId) {
-        // todo дописать после завершения имплементации security
+
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
         userCart.getBeds().remove(foundBed);
-
         cartRepository.save(userCart);
     }
 
     @Override
     public BigDecimal getTotalPrice(User authUser) {
-        // todo дописать после завершения имплементации security
-        throw new RuntimeException("Not implemented yet");
+
+        Cart userCart = getCartEntity(authUser);
+
+        return userCart.getBeds()
+                .stream()
+                .map(Bed::getPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override
