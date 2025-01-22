@@ -1,10 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.security.controller;
 
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RefreshRequestDTO;
+import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
 import ait.cohort49.hostel_casa_flamingo.security.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,6 +25,11 @@ public class AuthController {
         this.authService = authService;
     }
 
+
+    @PostMapping("/register")
+    public UserDto register(@RequestBody @Valid RegisterRequestDTO loginRequestDTO){
+        return authService.register(loginRequestDTO);
+    }
 
     @PostMapping("/login")
     public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) throws AuthenticationException {

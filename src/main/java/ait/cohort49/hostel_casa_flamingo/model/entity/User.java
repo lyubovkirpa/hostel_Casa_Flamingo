@@ -42,6 +42,17 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", orphanRemoval = true)
     private Cart cart;
 
+    public User(String firstName, String lastName, String email, String tel, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.tel = tel;
+        this.password = password;
+    }
+
+    public User() {
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
