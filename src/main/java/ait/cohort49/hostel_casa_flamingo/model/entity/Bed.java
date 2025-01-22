@@ -1,6 +1,5 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -26,6 +25,14 @@ public class Bed {
 
     @ManyToOne
     private Room room;
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
 
     public Long getId() {
         return id;
