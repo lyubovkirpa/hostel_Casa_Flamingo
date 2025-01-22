@@ -10,7 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
-import ait.cohort49.hostel_casa_flamingo.service.RoleService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoleService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
