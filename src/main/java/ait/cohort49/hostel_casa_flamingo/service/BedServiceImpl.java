@@ -2,8 +2,10 @@ package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +17,20 @@ public class BedServiceImpl implements BedService {
 
     private final BedRepository bedRepository;
     private final BedMappingService bedMappingService;
+    private final RoomService roomService;
 
-    public BedServiceImpl(BedRepository bedRepository, BedMappingService bedMappingService) {
+
+    public BedServiceImpl(BedRepository bedRepository, BedMappingService bedMappingService, RoomService roomService) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
+        this.roomService = roomService;
     }
 
     @Override
-    public BedDto saveBed(BedGetDto bedGetDto) {
-        Bed bed = bedMappingService.mapDtoToEntity(bedGetDto);
+    public BedDto saveBed(BedCreateDto bedCreateDto) {
+        Bed bed = bedMappingService.mapDtoToEntity(bedCreateDto);
+       Room room = roomService.findByIdOrThrow(bedCreateDto.getRoomId());
+       bed.setRoom(room);
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 

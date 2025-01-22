@@ -45,9 +45,16 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh", "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/beds/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/rooms").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/rooms/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/cart/**").permitAll()
                         .anyRequest().authenticated()
 
                 )
