@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/rooms").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/rooms/**").permitAll()
                         .anyRequest().authenticated()
 
                 )

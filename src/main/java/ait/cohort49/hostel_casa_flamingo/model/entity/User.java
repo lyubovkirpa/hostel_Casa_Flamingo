@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -26,6 +28,9 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, length = 64)
     private String email;
 
+    @Column(name = "tel", nullable = false, length = 15)
+    private String tel;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
@@ -33,6 +38,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    @OneToOne(mappedBy = "user", orphanRemoval = true)
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -47,9 +55,24 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
 
     public Long getId() {
         return id;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
     }
 
     public String getFirstName() {
@@ -85,11 +108,9 @@ public class User implements UserDetails {
     }
 
 
-
     public String getPassword() {
         return password;
     }
-
 
 
     public void setPassword(String password) {
@@ -111,8 +132,8 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, role - %s",
-                id, firstName, lastName, email, roles == null ? "[]" : roles);
+        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s",
+                id, firstName, lastName, email, tel, roles == null ? "[]" : roles);
     }
 
 
