@@ -28,6 +28,7 @@ public class BedController {
     /**
      * GET /beds/id
      */
+
     @GetMapping("/{id}")
     public BedDto getById(@PathVariable("id") Long id) {
         return bedService.getBedById(id);
@@ -36,15 +37,16 @@ public class BedController {
     /**
      * GET /beds
      */
+
     @GetMapping()
     public List<BedDto> getAll() {
         return bedService.getAllBeds();
     }
 
-
     /**
      * DELETE  /beds/id
      */
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         bedService.deleteBedById(id);

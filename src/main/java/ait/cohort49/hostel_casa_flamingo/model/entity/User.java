@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -37,11 +38,11 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles;
     }
+
     @Override
     public String getUsername() {
         return email;
     }
-
 
     @Column(name = "password")
     private String password;
