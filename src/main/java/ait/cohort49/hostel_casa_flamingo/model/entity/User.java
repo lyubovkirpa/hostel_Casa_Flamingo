@@ -42,12 +42,13 @@ public class User implements UserDetails {
     @OneToOne(mappedBy = "user", orphanRemoval = true)
     private Cart cart;
 
-    public User(String firstName, String lastName, String email, String tel, String password) {
+    public User(String firstName, String lastName, String email, String tel, String password, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.tel = tel;
         this.password = password;
+        this.roles.add(role);
     }
 
     public User() {
@@ -118,11 +119,9 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-
     public String getPassword() {
         return password;
     }
-
 
     public void setPassword(String password) {
         this.password = password;

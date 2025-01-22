@@ -8,12 +8,8 @@ import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
 import ait.cohort49.hostel_casa_flamingo.security.service.AuthService;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.naming.AuthenticationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,23 +23,18 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public UserDto register(@RequestBody @Valid RegisterRequestDTO loginRequestDTO){
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto register(@RequestBody @Valid RegisterRequestDTO loginRequestDTO) {
         return authService.register(loginRequestDTO);
     }
 
     @PostMapping("/login")
-    public TokenResponseDTO login(@RequestBody LoginRequestDTO loginRequestDTO) throws AuthenticationException {
+    public TokenResponseDTO login(@RequestBody @Valid LoginRequestDTO loginRequestDTO) {
         return authService.login(loginRequestDTO);
     }
 
     @PostMapping("/refresh")
-    public TokenResponseDTO refreshToken (@RequestBody RefreshRequestDTO refreshRequestDTO){
-
-        try {
-            return authService.refreshAccessToken(refreshRequestDTO.refreshToken());
-        } catch (AuthenticationException e) {
-            throw new RuntimeException(e);
-        }
-
+    public TokenResponseDTO refreshToken(@RequestBody @Valid RefreshRequestDTO refreshRequestDTO) {
+        return authService.refreshAccessToken(refreshRequestDTO.refreshToken());
     }
 }

@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.security.service;
 
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
@@ -9,18 +10,20 @@ import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
+import ait.cohort49.hostel_casa_flamingo.service.RoleService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
-import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingServiceImpl;
 import io.jsonwebtoken.Claims;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static ait.cohort49.hostel_casa_flamingo.service.mapping.UserEmailUtils.normalizeUserEmail;
 
 @Service
 public class AuthService {
@@ -33,13 +36,14 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserMappingService userMappingService;
     private final RoleRepository roleRepository;
+    private final RoleService roleService;
 
 
     public AuthService(TokenService tokenService,
                        UserDetailsService userService,
                        BCryptPasswordEncoder passwordEncoder,
                        UserRepository userRepository,
-                       UserMappingService userMappingService, RoleRepository roleRepository) {
+                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
@@ -47,10 +51,11 @@ public class AuthService {
         this.refreshStorage = new HashMap<>();
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
-    public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) throws AuthenticationException {
-        String username = loginRequestDTO.userEmail();
+    public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
+        String username = normalizeUserEmail(loginRequestDTO.userEmail());
         UserDetails foundUser = userService.loadUserByUsername(username);
 
         if (passwordEncoder.matches(loginRequestDTO.password(), foundUser.getPassword())) {
@@ -61,13 +66,14 @@ public class AuthService {
             return new TokenResponseDTO(accessToken, refreshToken);
         }
 
-        throw new AuthenticationException("Incorrect login and/ or password ");
+        throw new RestException(HttpStatus.UNAUTHORIZED, "Incorrect login and/ or password");
+
     }
 
-    public TokenResponseDTO refreshAccessToken(String refreshToken) throws AuthenticationException {
+    public TokenResponseDTO refreshAccessToken(String refreshToken) {
         boolean isValid = tokenService.validateRefreshToken(refreshToken);
         if (!isValid) {
-            throw new AuthenticationException("Incorrect refresh token. Re login please");
+            throw new RestException(HttpStatus.FORBIDDEN, "Incorrect refresh token. Re login please");
         }
         Claims refreshClaims = tokenService.getRefreshClaimsFromToken(refreshToken);
         String username = refreshClaims.getSubject();
@@ -82,25 +88,25 @@ public class AuthService {
 
             return new TokenResponseDTO(accessToken, refreshToken);
         }
-        throw new AuthenticationException("Incorrect refresh token. Re login please");
-
+        throw new RestException(HttpStatus.FORBIDDEN, "Incorrect refresh token. Re login please");
     }
 
     public UserDto register(RegisterRequestDTO loginRequestDTO) {
         String hashPassword = passwordEncoder.encode(loginRequestDTO.password());
-        String normalizedEmail = loginRequestDTO.userEmail().toLowerCase().trim();
+        String normalizedEmail = normalizeUserEmail(loginRequestDTO.userEmail());
         Optional<User> foundUser = userRepository.findUserByEmail(normalizedEmail);
         if (foundUser.isPresent()) {
-            throw new IllegalArgumentException("User with email " + normalizedEmail + " already exist");
+            throw new RestException(HttpStatus.BAD_REQUEST, "User with email '", loginRequestDTO.userEmail(), "' already exist");
         }
 
+        Role userRole = roleService.findRoleByTitleOrThrow(DEFAULD_USER_ROLE_NAME);
         User user = new User(loginRequestDTO.firstName(),
                 loginRequestDTO.lastName(),
                 normalizedEmail,
                 loginRequestDTO.phoneNumber(),
-                hashPassword);
-        roleRepository.findRoleByTitle(DEFAULD_USER_ROLE_NAME)
-                .ifPresent(r -> user.getRoles().add(r));
+                hashPassword,
+                userRole);
+
         userRepository.save(user);
         return userMappingService.mapEntityToDto(user);
     }
