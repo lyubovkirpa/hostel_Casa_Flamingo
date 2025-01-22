@@ -20,8 +20,6 @@ spring:
 server:
   servlet:
     context-path: /api
-  port: 8081
-
 
 key:
   access: ${KEY_ACCESS:1p+Yz99khoLXqeI28FdElevjMScw0XU1YkNh/WrduLY=}
