@@ -3,16 +3,23 @@ package ait.cohort49.hostel_casa_flamingo.service;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 
 @Schema(description = "Class that describes Bed")
-public class BedGetDto {
+public class BedCreateDto {
 
     private String number;
     private String type;
     private BigDecimal price;
+    private Long roomId;
 
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
 
     public String getNumber() {
         return number;
@@ -38,22 +45,10 @@ public class BedGetDto {
         this.price = price;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        BedGetDto bedGetDto = (BedGetDto) o;
-        return Objects.equals(number, bedGetDto.number) && Objects.equals(type, bedGetDto.type) && Objects.equals(price, bedGetDto.price);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(number, type, price);
-    }
 
     @Override
     public String toString() {
-        return String.format("Bed: number - %s, type - %s, price - %s",
-                number, type, price);
+        return String.format("Bed: number - %s, type - %s, price - %s, roomId - %s",
+                number, type, price, roomId);
     }
 }

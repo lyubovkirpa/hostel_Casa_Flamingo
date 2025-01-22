@@ -4,7 +4,6 @@ package ait.cohort49.hostel_casa_flamingo.security.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,9 +31,16 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth->auth
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/beds/**").permitAll()
+
                         .requestMatchers(HttpMethod.POST, "/rooms").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/rooms/**").permitAll()
+
+                        .requestMatchers(HttpMethod.GET, "/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/cart/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/cart/**").permitAll()
                         .anyRequest().authenticated()
                 );
         return http.build();
