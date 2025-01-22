@@ -7,7 +7,6 @@ import ait.cohort49.hostel_casa_flamingo.security.handler.AuthenticationEntryPoi
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,14 +22,14 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-    private TokenFilter tokenFilter;
+    private final TokenFilter tokenFilter;
 
     public SecurityConfig(TokenFilter tokenFilter) {
         this.tokenFilter = tokenFilter;
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -38,10 +37,11 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(ses-> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests(auth->auth
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/auth-test/no-auth").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh", "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
