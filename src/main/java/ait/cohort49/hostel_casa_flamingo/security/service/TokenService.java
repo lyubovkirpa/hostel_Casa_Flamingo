@@ -39,7 +39,7 @@ public class TokenService {
 
     public String generateAccessToken(UserDetails user) {
         Instant now = Instant.now();
-        Instant expiration = now.plus(3, ChronoUnit.DAYS);
+        Instant expiration = now.plus(10, ChronoUnit.DAYS);
 
         Date expirationDate = Date.from(expiration);
 
@@ -54,7 +54,7 @@ public class TokenService {
     public String generateRefreshToken(UserDetails user) {
 
         Instant now = Instant.now();
-        Instant expiration = now.plus(7, ChronoUnit.DAYS);
+        Instant expiration = now.plus(15, ChronoUnit.DAYS);
 
         Date expirationDate = Date.from(expiration);
 
