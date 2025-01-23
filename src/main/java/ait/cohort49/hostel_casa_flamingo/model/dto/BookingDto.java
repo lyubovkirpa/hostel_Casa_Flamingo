@@ -1,33 +1,24 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
-
-import jakarta.persistence.*;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Objects;
 
-@Entity
-public class Booking {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookingDto {
     private Long id;
     private String entry;
     private String departure;
-
-    @OneToMany (mappedBy = "booking")
-    private List<Bed> beds;
-    @OneToMany (mappedBy = "booking")
-    private List<Room> rooms;
-
-    @ManyToOne
-    private User user;
+    private List<BedDto> beds;
+    private List<RoomDto> rooms;
+    private UserDto user;
     private String bookingStatus;
     private ZonedDateTime bookingDate;
 
-
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEntry() {
@@ -46,27 +37,27 @@ public class Booking {
         this.departure = departure;
     }
 
-    public List<Bed> getBeds() {
+    public List<BedDto> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<Bed> beds) {
+    public void setBeds(List<BedDto> beds) {
         this.beds = beds;
     }
 
-    public List<Room> getRooms() {
+    public List<RoomDto> getRooms() {
         return rooms;
     }
 
-    public void setRooms(List<Room> rooms) {
+    public void setRooms(List<RoomDto> rooms) {
         this.rooms = rooms;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDto user) {
         this.user = user;
     }
 
@@ -84,19 +75,6 @@ public class Booking {
 
     public void setBookingDate(ZonedDateTime bookingDate) {
         this.bookingDate = bookingDate;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(id);
     }
 
     @Override
