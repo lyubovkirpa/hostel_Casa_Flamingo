@@ -13,7 +13,6 @@ public class UserDto {
     private String email;
     private String tel;
     private Set<RoleDto> roles = new HashSet<>();
-    private String password;
 
     public Long getId() {
         return id;
@@ -63,13 +62,6 @@ public class UserDto {
         this.roles = roles;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     @Override
     public boolean equals(Object o) {

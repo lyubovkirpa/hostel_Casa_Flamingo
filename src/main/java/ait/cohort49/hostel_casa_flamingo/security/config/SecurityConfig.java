@@ -1,6 +1,9 @@
 package ait.cohort49.hostel_casa_flamingo.security.config;
 
 
+import ait.cohort49.hostel_casa_flamingo.security.filter.TokenFilter;
+import ait.cohort49.hostel_casa_flamingo.security.handler.AuthAccessDeniedHandler;
+import ait.cohort49.hostel_casa_flamingo.security.handler.AuthenticationEntryPointHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,14 +14,22 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
+    private final TokenFilter tokenFilter;
+
+    public SecurityConfig(TokenFilter tokenFilter) {
+        this.tokenFilter = tokenFilter;
+    }
+
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -26,9 +37,12 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(ses-> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(ses -> ses.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth->auth
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.GET, "/auth-test/no-auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh", "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
@@ -42,7 +56,15 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/cart/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/cart/**").permitAll()
                         .anyRequest().authenticated()
-                );
+
+                )
+                .exceptionHandling(
+                        exception -> exception
+                                .defaultAuthenticationEntryPointFor(
+                                        new AuthenticationEntryPointHandler(),
+                                        new AntPathRequestMatcher("/**")
+                                )
+                                .accessDeniedHandler(new AuthAccessDeniedHandler()));
         return http.build();
     }
 }
