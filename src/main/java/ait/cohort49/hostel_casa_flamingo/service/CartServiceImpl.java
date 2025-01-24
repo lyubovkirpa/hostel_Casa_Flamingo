@@ -3,6 +3,7 @@ package ait.cohort49.hostel_casa_flamingo.service;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
+import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
@@ -11,6 +12,8 @@ import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -41,19 +44,18 @@ public class CartServiceImpl implements CartService {
 
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
-
-        if (!userCart.getBeds().contains(foundBed)) {
-            userCart.getBeds().add(foundBed);
-            cartRepository.save(userCart);
-        }
     }
 
     @Override
     public void removeBedFromCart(User authUser, Long bedId) {
-
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
-        userCart.getBeds().remove(foundBed);
+
+        List<CartItemBed> cartItemBeds = userCart.getCartItemBeds();
+        Optional<CartItemBed> itemBed = cartItemBeds.stream()
+                .filter(cartItemBed -> cartItemBed.getBed().equals(foundBed))
+                .findFirst();
+        itemBed.ifPresent(cartItemBeds::remove);
         cartRepository.save(userCart);
     }
 
@@ -62,8 +64,9 @@ public class CartServiceImpl implements CartService {
 
         Cart userCart = getCartEntity(authUser);
 
-        return userCart.getBeds()
+        return userCart.getCartItemBeds()
                 .stream()
+                .map(CartItemBed::getBed)
                 .map(Bed::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
@@ -71,7 +74,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void clearUserCart(User authUser) {
         Cart cartEntity = getCartEntity(authUser);
-        cartEntity.getBeds().clear();
+        cartEntity.getCartItemBeds().clear();
 
         cartRepository.save(cartEntity);
     }

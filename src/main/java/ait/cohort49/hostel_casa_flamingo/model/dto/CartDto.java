@@ -9,13 +9,10 @@ import java.util.Objects;
 public class CartDto {
 
     private Long id;
-    private List<BedDto> beds;
-
-//    private List<RoomDto> rooms;
+    private List<CartItemBedDto> beds;
 
     @JsonBackReference
     private UserDto userDto;
-
 
     public Long getId() {
         return id;
@@ -25,21 +22,13 @@ public class CartDto {
         this.id = id;
     }
 
-    public List<BedDto> getBeds() {
+    public List<CartItemBedDto> getBeds() {
         return beds;
     }
 
-    public void setBeds(List<BedDto> beds) {
+    public void setBeds(List<CartItemBedDto> beds) {
         this.beds = beds;
     }
-
-//    public List<RoomDto> getRooms() {
-//        return rooms;
-//    }
-//
-//    public void setRooms(List<RoomDto> rooms) {
-//        this.rooms = rooms;
-//    }
 
     public UserDto getUserDto() {
         return userDto;
@@ -62,9 +51,9 @@ public class CartDto {
         return Objects.hashCode(id);
     }
 
-//    @Override
-//    public String toString() {
-//        return String.format("CartDto: id - %d, beds - %s, rooms - %s",
-//                this.id, beds == null ? 0 : beds.size(), rooms == null ? 0 : rooms.size());
-//    }
+    @Override
+    public String toString() {
+        return String.format("CartDto: id - %d, cartItemBeds - %s",
+                this.id, beds);
+    }
 }
