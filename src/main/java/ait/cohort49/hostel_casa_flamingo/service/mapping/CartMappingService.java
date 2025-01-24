@@ -10,6 +10,6 @@ import org.mapstruct.MappingConstants;
 public interface CartMappingService {
 
     @Mapping(target = "userDto", source = "user")
-    @Mapping(target = "beds", source = "beds")
+    @Mapping(target = "beds", source = "cartItemBeds")
     CartDto mapEntityToDto(Cart entity);
 }
