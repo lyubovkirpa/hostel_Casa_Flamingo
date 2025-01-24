@@ -3,6 +3,8 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,15 +26,12 @@ public class Bed {
     private BigDecimal price;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
     private Room room;
 
-    public Room getRoom() {
-        return room;
-    }
+    @OneToMany(mappedBy = "bed")
+    private List<Booking> bookings = new ArrayList<>();
 
-    public void setRoom(Room room) {
-        this.room = room;
-    }
 
     public Long getId() {
         return id;
@@ -62,6 +61,22 @@ public class Bed {
         this.price = price;
     }
 
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,7 +92,7 @@ public class Bed {
 
     @Override
     public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
+        return String.format("Bed: id - %d, number - %s, type - %s, price - %s, bookings - %s",
+                id, number, type, price, bookings == null ? "null" : bookings.size());
     }
 }

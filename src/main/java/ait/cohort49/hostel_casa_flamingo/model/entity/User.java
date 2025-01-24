@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -46,13 +43,17 @@ public class User implements UserDetails {
         return roles;
     }
 
+    @Column(name = "password")
+    private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<Booking> bookings = new ArrayList<>();
+
+
     @Override
     public String getUsername() {
         return email;
     }
-
-    @Column(name = "password")
-    private String password;
 
     public Cart getCart() {
         return cart;
@@ -111,9 +112,16 @@ public class User implements UserDetails {
         return password;
     }
 
-
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
     }
 
     @Override
@@ -131,9 +139,7 @@ public class User implements UserDetails {
 
     @Override
     public String toString() {
-        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s",
-                id, firstName, lastName, email, tel, roles == null ? "[]" : roles);
+        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s, bookings - %s" ,
+                id, firstName, lastName, email, tel, roles == null ? "[]" : roles, bookings);
     }
-
-
 }

@@ -1,7 +1,5 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,29 +12,14 @@ public class RoomDto {
     private String type;
     private BigDecimal price;
     private List<BedDto> beds = new ArrayList<>();
+    private List<BookingDto> bookings = new ArrayList<>();
 
-    public String getType() {
-        return type;
+    public Long getId() {
+        return id;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<BedDto> getBeds() {
-        return beds;
-    }
-
-    public void setBeds(List<BedDto> beds) {
-        this.beds = beds;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getNumber() {
@@ -47,24 +30,60 @@ public class RoomDto {
         this.number = number;
     }
 
-    public Long getId() {
-        return id;
+    public String getType() {
+        return type;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setType(String type) {
+        this.type = type;
     }
 
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public List<BedDto> getBeds() {
+        return beds;
+    }
+
+    public void setBeds(List<BedDto> beds) {
+        this.beds = beds;
+    }
+
+    public List<BookingDto> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<BookingDto> bookings) {
+        this.bookings = bookings;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RoomDto roomDto)) return false;
-        return Objects.equals(id, roomDto.id) && Objects.equals(number, roomDto.number) && Objects.equals(type, roomDto.type) && Objects.equals(price, roomDto.price) && Objects.equals(beds, roomDto.beds);
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomDto roomDto = (RoomDto) o;
+        return Objects.equals(id, roomDto.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, type, price, beds);
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "RoomDto{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", type='" + type + '\'' +
+                ", price=" + price +
+                ", beds=" + beds +
+                ", bookings=" + bookings.size() +
+                '}';
     }
 }

@@ -20,35 +20,43 @@ public class CartController {
         this.userRepository = userRepository;
     }
 
-    // Получить корзину пользователя
     @GetMapping("/{userId}")
     public CartDto getCart(@PathVariable Long userId) {
-        User user = findUserById(userId);  // метод для поиска пользователя по ID
-        return cartService.getCart(user);  // Преобразуем Cart в CartDto для передачи в ответе
+        User user = findUserById(userId);
+        return cartService.getCart(user);
     }
 
-    // Добавить кровать в корзину
     @PostMapping("/bed/{bedId}")
     public void addBedToCart(@PathVariable Long bedId, @RequestParam Long userId) {
         User user = findUserById(userId);
         cartService.addBedToCart(user, bedId);
     }
 
-    // Удалить кровать из корзины
+    @PostMapping("/room/{roomId}")
+    public void addRoomToCart(@PathVariable Long roomId, @RequestParam Long userId) {
+        User user = findUserById(userId);
+        cartService.addBedToCart(user, roomId);
+    }
+
+
     @DeleteMapping("/remove_bed/{bedId}")
     public void removeBedFromCart(@PathVariable Long bedId, @RequestParam Long userId) {
         User user = findUserById(userId);
         cartService.removeBedFromCart(user, bedId);
     }
 
-    // Получить общую стоимость корзины
+    @DeleteMapping("/remove_room/{roomId}")
+    public void removeRoomFromCart(@PathVariable Long roomId, @RequestParam Long userId) {
+        User user = findUserById(userId);
+        cartService.removeBedFromCart(user, roomId);
+    }
+
     @GetMapping("/total_price")
     public BigDecimal getTotalPrice(@RequestParam Long userId) {
         User user = findUserById(userId);
         return cartService.getTotalPrice(user);
     }
 
-    // Очистить корзину
     @DeleteMapping("/clear")
     public void clearCart(@RequestParam Long userId) {
         User user = findUserById(userId);
@@ -57,8 +65,7 @@ public class CartController {
 
     // Метод для поиска пользователя по ID
     private User findUserById(Long userId) {
-return userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
-
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
     }
 }

@@ -3,6 +3,8 @@ package ait.cohort49.hostel_casa_flamingo.service;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Schema(description = "Class that describes Bed")
@@ -12,6 +14,7 @@ public class BedCreateDto {
     private String type;
     private BigDecimal price;
     private Long roomId;
+    private List<Long> bookingIds = new ArrayList<>();
 
     public Long getRoomId() {
         return roomId;
@@ -45,10 +48,17 @@ public class BedCreateDto {
         this.price = price;
     }
 
+    public List<Long> getBookingIds() {
+        return bookingIds;
+    }
+
+    public void setBookingIds(List<Long> bookingIds) {
+        this.bookingIds = bookingIds;
+    }
 
     @Override
     public String toString() {
-        return String.format("Bed: number - %s, type - %s, price - %s, roomId - %s",
-                number, type, price, roomId);
+        return String.format("Bed: number - %s, type - %s, price - %s, roomId - %s, bookingIds - %s",
+                number, type, price, roomId, bookingIds);
     }
 }

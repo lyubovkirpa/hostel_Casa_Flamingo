@@ -2,27 +2,43 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Booking {
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "entry")
     private String entry;
+
+    @Column(name = "departure")
     private String departure;
 
-    @OneToMany (mappedBy = "booking")
-    private List<Bed> beds;
-    @OneToMany (mappedBy = "booking")
-    private List<Room> rooms;
+    @ManyToOne
+    @JoinColumn(name = "bed_id")
+    private Bed bed;
 
     @ManyToOne
+    @JoinColumn(name = "room_id")
+    private Room room;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
+
+    @Column(name = "booking_price")
+    private BigDecimal bookingPrice;
+
+    @Column(name = "booking_status")
     private String bookingStatus;
+
+    @Column(name = "booking_date")
     private ZonedDateTime bookingDate;
 
 
@@ -46,20 +62,20 @@ public class Booking {
         this.departure = departure;
     }
 
-    public List<Bed> getBeds() {
-        return beds;
+    public Bed getBed() {
+        return bed;
     }
 
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
+    public void setBed(Bed bed) {
+        this.bed = bed;
     }
 
-    public List<Room> getRooms() {
-        return rooms;
+    public Room getRoom() {
+        return room;
     }
 
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
+    public void setRoom(Room room) {
+        this.room = room;
     }
 
     public User getUser() {
@@ -68,6 +84,14 @@ public class Booking {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public BigDecimal getBookingPrice() {
+        return bookingPrice;
+    }
+
+    public void setBookingPrice(BigDecimal bookingPrice) {
+        this.bookingPrice = bookingPrice;
     }
 
     public String getBookingStatus() {
@@ -101,8 +125,8 @@ public class Booking {
 
     @Override
     public String toString() {
-        return String.format("Booking: id - %d, entry - %s, departure - %s, user - %s, beds - %s, rooms - %s, bookingStatus - %s, bookingDate - %s",
-                id, entry, departure, user == null ? "null" : user.toString(), beds == null ? "null" : beds.size(),
-                rooms == null ? "null" : rooms.size(), bookingStatus, bookingDate == null ? "null" : bookingDate.toString());
+        return String.format("Booking: id - %d, entry - %s, departure - %s, user - %s, bed - %s, room - %s, bookingStatus - %s, bookingDate - %s",
+                id, entry, departure, user == null ? "null" : user.toString(), bed == null ? "null" : bed.toString(),
+                room == null ? "null" : room.toString(), bookingStatus, bookingDate == null ? "null" : bookingDate.toString());
     }
 }

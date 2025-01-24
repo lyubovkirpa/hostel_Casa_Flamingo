@@ -1,8 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 
 public class UserDto {
@@ -14,6 +12,7 @@ public class UserDto {
     private String tel;
     private Set<RoleDto> roles = new HashSet<>();
     private String password;
+    private List<BookingDto> bookings = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -71,6 +70,14 @@ public class UserDto {
         this.password = password;
     }
 
+    public List<BookingDto> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<BookingDto> bookings) {
+        this.bookings = bookings;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,7 +93,7 @@ public class UserDto {
 
     @Override
     public String toString() {
-        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s",
-                id, firstName, lastName, email, tel, roles == null ? "[]" : roles);
+        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s, bookings - %s",
+                id, firstName, lastName, email, tel, roles == null ? "[]" : roles, bookings);
     }
 }

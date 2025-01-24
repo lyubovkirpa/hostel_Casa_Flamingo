@@ -1,10 +1,10 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -15,7 +15,8 @@ public class BedDto {
     private String number;
     private String type;
     private BigDecimal price;
-
+    private Long roomId;
+    private List<Long> bookingIds = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -49,6 +50,22 @@ public class BedDto {
         this.price = price;
     }
 
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+
+    public List<Long> getBookingIds() {
+        return bookingIds;
+    }
+
+    public void setBookingIds(List<Long> bookingIds) {
+        this.bookingIds = bookingIds;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -64,7 +81,7 @@ public class BedDto {
 
     @Override
     public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
+        return String.format("Bed: id - %d, number - %s, type - %s, price - %s, roomId - %d, bookingIds - %d",
+                id, number, type, price, roomId, bookingIds.size());
     }
 }

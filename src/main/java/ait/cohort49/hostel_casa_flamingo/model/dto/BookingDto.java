@@ -1,17 +1,24 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
+import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 
 public class BookingDto {
+
     private Long id;
     private String entry;
     private String departure;
-    private List<BedDto> beds;
-    private List<RoomDto> rooms;
+    private List<BedDto> beds = new ArrayList<>();
+    private List<RoomDto> rooms = new ArrayList<>();
     private UserDto user;
+    private BigDecimal bookingPrice;
     private String bookingStatus;
     private ZonedDateTime bookingDate;
+
 
     public Long getId() {
         return id;
@@ -61,6 +68,14 @@ public class BookingDto {
         this.user = user;
     }
 
+    public BigDecimal getBookingPrice() {
+        return bookingPrice;
+    }
+
+    public void setBookingPrice(BigDecimal bookingPrice) {
+        this.bookingPrice = bookingPrice;
+    }
+
     public String getBookingStatus() {
         return bookingStatus;
     }
@@ -75,6 +90,19 @@ public class BookingDto {
 
     public void setBookingDate(ZonedDateTime bookingDate) {
         this.bookingDate = bookingDate;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BookingDto that = (BookingDto) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 
     @Override

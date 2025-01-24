@@ -16,31 +16,13 @@ public class Room {
     private String number;
     private String type;
     private BigDecimal price;
-    @OneToMany (mappedBy = "room")
+    @OneToMany(mappedBy = "room")
     private List<Bed> beds = new ArrayList<>();
+    @OneToMany(mappedBy = "room")
+    private List<Booking> bookings = new ArrayList<>();
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<Bed> getBeds() {
-        return beds;
-    }
-
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
+    public Long getId() {
+        return id;
     }
 
     public String getNumber() {
@@ -51,18 +33,43 @@ public class Room {
         this.number = number;
     }
 
-    public Long getId() {
-        return id;
+    public String getType() {
+        return type;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public List<Bed> getBeds() {
+        return beds;
+    }
+
+    public void setBeds(List<Bed> beds) {
+        this.beds = beds;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Room room)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+        Room room = (Room) o;
         return Objects.equals(id, room.id);
     }
 
@@ -78,6 +85,8 @@ public class Room {
                 ", number='" + number + '\'' +
                 ", type='" + type + '\'' +
                 ", price=" + price +
+                ", beds=" + beds +
+                ", bookings=" + bookings.size() +
                 '}';
     }
 }
