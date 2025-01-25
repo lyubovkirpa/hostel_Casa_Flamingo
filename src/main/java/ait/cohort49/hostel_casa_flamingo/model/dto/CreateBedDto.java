@@ -1,4 +1,4 @@
-package ait.cohort49.hostel_casa_flamingo.service;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 
 
 @Schema(description = "Class that describes Bed")
-public class BedCreateDto {
+public class CreateBedDto {
 
     private String number;
     private String type;

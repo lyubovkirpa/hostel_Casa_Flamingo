@@ -1,9 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
+import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
+import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
+import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -13,52 +17,72 @@ import java.math.BigDecimal;
 public class CartController {
 
     private final CartService cartService;
-    private final UserRepository userRepository;
+    private final UserService userService;
+    private final UserMappingService userMappingService;
 
-    public CartController(CartService cartService, UserRepository userRepository) {
+    public CartController(CartService cartService, UserService userService, UserMappingService userMappingService) {
         this.cartService = cartService;
-        this.userRepository = userRepository;
+        this.userService = userService;
+        this.userMappingService = userMappingService;
     }
 
-    // Получить корзину пользователя
-    @GetMapping("/{userId}")
-    public CartDto getCart(@PathVariable Long userId) {
-        User user = findUserById(userId);  // метод для поиска пользователя по ID
-        return cartService.getCart(user);  // Преобразуем Cart в CartDto для передачи в ответе
+    /**
+     * Получить корзину пользователя
+     */
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public CartDto getCart(@AuthenticationPrincipal String userEmail) {
+        User user = getUserByEmailOrThrow(userEmail);
+        return cartService.getCart(user);
     }
 
-    // Добавить кровать в корзину
+    /**
+     * Получить пользователя по его email
+     */
+    public User getUserByEmailOrThrow(String userEmail) {
+        UserDto userDto = userService.findUserByEmailOrThrow(userEmail);
+        return userMappingService.mapDtoToEntity(userDto);
+    }
+
+
+    /**
+     * Добавить кровать в корзину
+     */
     @PostMapping("/bed/{bedId}")
-    public void addBedToCart(@PathVariable Long bedId, @RequestParam Long userId) {
-        User user = findUserById(userId);
+    @PreAuthorize("isAuthenticated()")
+    public void addBedToCart(@PathVariable Long bedId, @AuthenticationPrincipal String userEmail) {
+        User user = getUserByEmailOrThrow(userEmail);
         cartService.addBedToCart(user, bedId);
     }
 
-    // Удалить кровать из корзины
+    /**
+     * Удалить кровать из корзины
+     */
     @DeleteMapping("/remove_bed/{bedId}")
-    public void removeBedFromCart(@PathVariable Long bedId, @RequestParam Long userId) {
-        User user = findUserById(userId);
+    @PreAuthorize("isAuthenticated()")
+    public void removeBedFromCart(@PathVariable Long bedId, @AuthenticationPrincipal String userEmail) {
+        User user = getUserByEmailOrThrow(userEmail);
         cartService.removeBedFromCart(user, bedId);
     }
 
-    // Получить общую стоимость корзины
+
+    /**
+     * Получить общую стоимость корзины
+     */
     @GetMapping("/total_price")
-    public BigDecimal getTotalPrice(@RequestParam Long userId) {
-        User user = findUserById(userId);
+    @PreAuthorize("isAuthenticated()")
+    public BigDecimal getTotalPrice(@AuthenticationPrincipal String userEmail) {
+        User user = getUserByEmailOrThrow(userEmail);
         return cartService.getTotalPrice(user);
     }
 
-    // Очистить корзину
+    /**
+     * Очистить корзину
+     */
     @DeleteMapping("/clear")
-    public void clearCart(@RequestParam Long userId) {
-        User user = findUserById(userId);
+    @PreAuthorize("isAuthenticated()")
+    public void clearCart(@AuthenticationPrincipal String userEmail) {
+        User user = getUserByEmailOrThrow(userEmail);
         cartService.clearUserCart(user);
-    }
-
-    // Метод для поиска пользователя по ID
-    private User findUserById(Long userId) {
-return userRepository.findById(userId)
-        .orElseThrow(() -> new RuntimeException("User with id " + userId + " not found"));
-
     }
 }
