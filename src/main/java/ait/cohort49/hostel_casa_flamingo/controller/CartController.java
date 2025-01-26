@@ -4,7 +4,6 @@ import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
-import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +17,7 @@ public class CartController {
     private final CartService cartService;
     private final UserService userService;
 
-    public CartController(CartService cartService, UserService userService, UserMappingService userMappingService) {
+    public CartController(CartService cartService, UserService userService) {
         this.cartService = cartService;
         this.userService = userService;
     }
