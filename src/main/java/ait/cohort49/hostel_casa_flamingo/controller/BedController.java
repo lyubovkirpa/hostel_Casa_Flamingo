@@ -2,7 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.controller;
 
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
-import ait.cohort49.hostel_casa_flamingo.service.BedCreateDto;
+import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +21,8 @@ public class BedController {
 
 
     @PostMapping
-    public BedDto saveBed(@RequestBody BedCreateDto bedCreateDto) {
-        return bedService.saveBed(bedCreateDto);
+    public BedDto saveBed(@RequestBody CreateBedDto createBedDto) {
+        return bedService.saveBed(createBedDto);
     }
 
     /**

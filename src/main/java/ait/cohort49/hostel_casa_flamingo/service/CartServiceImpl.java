@@ -12,6 +12,7 @@ import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +45,15 @@ public class CartServiceImpl implements CartService {
 
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
+
+        CartItemBed newCartItemBed = new CartItemBed();
+        newCartItemBed.setBed(foundBed);
+        newCartItemBed.setCart(userCart);
+        newCartItemBed.setEntryDate(ZonedDateTime.now());
+        newCartItemBed.setDepartureDate(ZonedDateTime.now());
+
+        userCart.getCartItemBeds().add(newCartItemBed);
+        cartRepository.save(userCart);
     }
 
     @Override

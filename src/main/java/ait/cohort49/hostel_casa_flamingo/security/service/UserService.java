@@ -22,4 +22,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with email: " + userEmail + " not found"));
         return userMappingService.mapEntityToDto(user);
     }
+
+    public User getUserByEmailOrThrow(String userEmail) {
+        return userRepository.findUserByEmail(userEmail)
+                .orElseThrow(() -> new RuntimeException("User with email: " + userEmail + " not found"));
+    }
 }
