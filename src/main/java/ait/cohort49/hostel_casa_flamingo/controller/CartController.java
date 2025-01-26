@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
-import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
@@ -18,12 +17,10 @@ public class CartController {
 
     private final CartService cartService;
     private final UserService userService;
-    private final UserMappingService userMappingService;
 
     public CartController(CartService cartService, UserService userService, UserMappingService userMappingService) {
         this.cartService = cartService;
         this.userService = userService;
-        this.userMappingService = userMappingService;
     }
 
     /**
@@ -32,16 +29,8 @@ public class CartController {
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public CartDto getCart(@AuthenticationPrincipal String userEmail) {
-        User user = getUserByEmailOrThrow(userEmail);
+        User user = userService.getUserByEmailOrThrow(userEmail);
         return cartService.getCart(user);
-    }
-
-    /**
-     * Получить пользователя по его email
-     */
-    public User getUserByEmailOrThrow(String userEmail) {
-        UserDto userDto = userService.findUserByEmailOrThrow(userEmail);
-        return userMappingService.mapDtoToEntity(userDto);
     }
 
 
@@ -51,7 +40,7 @@ public class CartController {
     @PostMapping("/bed/{bedId}")
     @PreAuthorize("isAuthenticated()")
     public void addBedToCart(@PathVariable Long bedId, @AuthenticationPrincipal String userEmail) {
-        User user = getUserByEmailOrThrow(userEmail);
+        User user = userService.getUserByEmailOrThrow(userEmail);
         cartService.addBedToCart(user, bedId);
     }
 
@@ -61,7 +50,7 @@ public class CartController {
     @DeleteMapping("/remove_bed/{bedId}")
     @PreAuthorize("isAuthenticated()")
     public void removeBedFromCart(@PathVariable Long bedId, @AuthenticationPrincipal String userEmail) {
-        User user = getUserByEmailOrThrow(userEmail);
+        User user = userService.getUserByEmailOrThrow(userEmail);
         cartService.removeBedFromCart(user, bedId);
     }
 
@@ -72,7 +61,7 @@ public class CartController {
     @GetMapping("/total_price")
     @PreAuthorize("isAuthenticated()")
     public BigDecimal getTotalPrice(@AuthenticationPrincipal String userEmail) {
-        User user = getUserByEmailOrThrow(userEmail);
+        User user = userService.getUserByEmailOrThrow(userEmail);
         return cartService.getTotalPrice(user);
     }
 
@@ -82,7 +71,7 @@ public class CartController {
     @DeleteMapping("/clear")
     @PreAuthorize("isAuthenticated()")
     public void clearCart(@AuthenticationPrincipal String userEmail) {
-        User user = getUserByEmailOrThrow(userEmail);
+        User user = userService.getUserByEmailOrThrow(userEmail);
         cartService.clearUserCart(user);
     }
 }
