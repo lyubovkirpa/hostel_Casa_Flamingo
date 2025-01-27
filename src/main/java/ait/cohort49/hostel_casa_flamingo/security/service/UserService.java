@@ -22,4 +22,6 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User with email: " + userEmail + " not found"));
         return userMappingService.mapEntityToDto(user);
     }
+
+
 }

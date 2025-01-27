@@ -5,6 +5,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
+import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
@@ -19,11 +20,13 @@ public class CartServiceImpl implements CartService {
     private final BedService bedService;
     private final CartRepository cartRepository;
     private final CartMappingService cartMappingService;
+    private final UserService userService;
 
-    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService) {
+    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserService userService) {
         this.bedService = bedService;
         this.cartRepository = cartRepository;
         this.cartMappingService = cartMappingService;
+        this.userService = userService;
     }
 
     @Override

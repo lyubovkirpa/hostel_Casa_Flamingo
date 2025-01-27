@@ -23,7 +23,7 @@ public class CartController {
     // Получить корзину пользователя
     @GetMapping("/{userId}")
     public CartDto getCart(@PathVariable Long userId) {
-        User user = findUserById(userId);  // метод для поиска пользователя по ID
+        User user = findUserById(userId);
         return cartService.getCart(user);  // Преобразуем Cart в CartDto для передачи в ответе
     }
 
