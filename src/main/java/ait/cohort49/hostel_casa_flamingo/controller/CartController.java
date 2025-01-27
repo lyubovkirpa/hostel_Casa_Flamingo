@@ -2,7 +2,6 @@ package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.security.dto;
 
 import ait.cohort49.hostel_casa_flamingo.constants.ValidationConstants;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
