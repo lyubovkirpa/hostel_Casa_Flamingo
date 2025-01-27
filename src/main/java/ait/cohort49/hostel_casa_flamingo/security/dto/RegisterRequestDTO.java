@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Pattern;
 public record RegisterRequestDTO(@NotBlank(message = "{validation.email.not_blank}")
                                  @Pattern(
                                          regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$",
-                                         message = "{validation.email.invalid_format}"
+                                         message = "{validation.email.invalid}"
                                  )
                                  String userEmail,
 
