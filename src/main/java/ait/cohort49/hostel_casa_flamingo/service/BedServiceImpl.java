@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
+import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
@@ -27,9 +28,9 @@ public class BedServiceImpl implements BedService {
     }
 
     @Override
-    public BedDto saveBed(BedCreateDto bedCreateDto) {
-        Bed bed = bedMappingService.mapDtoToEntity(bedCreateDto);
-       Room room = roomService.findByIdOrThrow(bedCreateDto.getRoomId());
+    public BedDto saveBed(CreateBedDto createBedDto) {
+        Bed bed = bedMappingService.mapDtoToEntity(createBedDto);
+       Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
        bed.setRoom(room);
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }

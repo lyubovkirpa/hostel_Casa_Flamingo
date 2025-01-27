@@ -3,11 +3,13 @@ package ait.cohort49.hostel_casa_flamingo.service.mapping;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 
-@Mapper(componentModel = "spring", uses = UserMappingService.class)
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {UserMappingService.class, CartItemBedMappingService.class})
 public interface CartMappingService {
 
-    Cart mapDtoToEntity(CartDto cartDto);
-
+    @Mapping(target = "userDto", source = "user")
+    @Mapping(target = "beds", source = "cartItemBeds")
     CartDto mapEntityToDto(Cart entity);
 }

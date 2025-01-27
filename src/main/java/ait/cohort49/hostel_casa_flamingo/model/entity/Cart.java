@@ -15,26 +15,13 @@ public class Cart {
     @Column(name = "id")
     private Long id;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cart_bed",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "bed_id")
-    )
-    private List<Bed> beds = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "cart_room",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "room_id")
-    )
-    private List<Room> rooms = new ArrayList<>();
-
     @JsonIgnore
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
+
+    @OneToMany(mappedBy = "cart")
+    private List<CartItemBed> cartItemBeds = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -44,21 +31,6 @@ public class Cart {
         this.id = id;
     }
 
-    public List<Bed> getBeds() {
-        return beds;
-    }
-
-    public void setBeds(List<Bed> beds) {
-        this.beds = beds;
-    }
-
-    public List<Room> getRooms() {
-        return rooms;
-    }
-
-    public void setRooms(List<Room> rooms) {
-        this.rooms = rooms;
-    }
 
     public User getUser() {
         return user;
@@ -66,6 +38,14 @@ public class Cart {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public List<CartItemBed> getCartItemBeds() {
+        return cartItemBeds;
+    }
+
+    public void setCartItemBeds(List<CartItemBed> cartItemBeds) {
+        this.cartItemBeds = cartItemBeds;
     }
 
     @Override
@@ -83,7 +63,10 @@ public class Cart {
 
     @Override
     public String toString() {
-        return String.format("Cart: id - %d, beds - %s, rooms - %s",
-                this.id, beds == null ? 0 : beds.size(), rooms == null ? 0 : rooms.size());
+        return "Cart{" +
+                "id=" + id +
+                ", user=" + user +
+                ", cartItemBeds=" + (cartItemBeds  == null ? 0 : cartItemBeds.size()) +
+                '}';
     }
 }

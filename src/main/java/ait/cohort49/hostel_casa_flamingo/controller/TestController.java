@@ -19,13 +19,13 @@ public class TestController {
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public UserDto testAuthAdmin(@AuthenticationPrincipal String userEmail) {
         return userService.findUserByEmailOrThrow(userEmail);
     }
 
     @GetMapping("/user")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public UserDto testAuthUser(@AuthenticationPrincipal String userEmail) {
         return userService.findUserByEmailOrThrow(userEmail);
     }
