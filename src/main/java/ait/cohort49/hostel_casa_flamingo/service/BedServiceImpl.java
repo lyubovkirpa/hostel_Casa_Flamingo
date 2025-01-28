@@ -10,7 +10,6 @@ import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -61,14 +60,4 @@ public class BedServiceImpl implements BedService {
         getBedOrThrow(id);
         bedRepository.deleteById(id);
     }
-
-    @Override
-    public BigDecimal getTotalBedPriceForRoom(Long roomId) {
-        List<Bed> bedsInRoom = bedRepository.findByRoomId(roomId);
-        return bedsInRoom
-                .stream()
-                .map(Bed::getPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
 }
