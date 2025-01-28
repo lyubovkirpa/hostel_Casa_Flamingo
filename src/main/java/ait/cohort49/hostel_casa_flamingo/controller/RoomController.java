@@ -2,7 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
-import ait.cohort49.hostel_casa_flamingo.service.BedServiceImpl;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,12 +23,10 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
-    private final BedServiceImpl bedServiceImpl;
-    private final BedServiceImpl bedService;
+    private final BedService bedService;
 
-    public RoomController(RoomService roomService, BedServiceImpl bedServiceImpl, BedServiceImpl bedService) {
+    public RoomController(RoomService roomService, BedService bedService) {
         this.roomService = roomService;
-        this.bedServiceImpl = bedServiceImpl;
         this.bedService = bedService;
     }
 
