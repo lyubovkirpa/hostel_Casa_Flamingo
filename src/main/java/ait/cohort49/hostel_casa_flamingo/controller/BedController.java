@@ -24,7 +24,7 @@ public class BedController {
      * POST /beds
      */
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BedDto saveBed(@RequestBody CreateBedDto createBedDto) {
         return bedService.saveBed(createBedDto);
     }
@@ -48,7 +48,7 @@ public class BedController {
     /**
      * DELETE  /beds/id
      */
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void remove(@PathVariable Long id) {
         bedService.deleteBedById(id);

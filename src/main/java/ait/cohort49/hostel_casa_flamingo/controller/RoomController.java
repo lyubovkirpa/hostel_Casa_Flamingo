@@ -61,7 +61,7 @@ public class RoomController {
                     })
     })
     @PostMapping
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RoomDto createRoom(@RequestBody CreateOrUpdateRoomDto roomDto) {
         return roomService.createRoom(roomDto);
     }
@@ -70,7 +70,7 @@ public class RoomController {
      * Удалить комнату (DELETE /rooms/{id}).
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
     }
