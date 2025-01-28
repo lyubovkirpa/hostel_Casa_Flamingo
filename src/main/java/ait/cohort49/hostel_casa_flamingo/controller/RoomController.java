@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -30,7 +31,6 @@ public class RoomController {
         this.bedService = bedService;
     }
 
-
     /**
      * Получить список всех комнат (GET /rooms).
      */
@@ -39,21 +39,24 @@ public class RoomController {
         return roomService.getAllRooms();
     }
 
+    /**
+     * Найти комнату по ID (GET /rooms/{id}).
+     */
     @Operation(summary = "Get room by id", tags = {"Room"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RoomDto.class)),
                     @Content(mediaType = "application/xml", schema = @Schema(implementation = RoomDto.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Product not found", content = @Content)})
-    /**
-     * Найти комнату по ID (GET /rooms/{id}).
-     */
     @GetMapping("/{id}")
     public RoomDto getRoomById(@PathVariable Long id) {
         return roomService.getRoomById(id);
     }
 
 
+    /**
+     * Создать новую комнату (POST/rooms).
+     */
     @Operation(summary = "Create room", description = "Add new room", tags = {"Room"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
@@ -61,10 +64,8 @@ public class RoomController {
                             @Content(mediaType = "application/xml", schema = @Schema(implementation = RoomDto.class))
                     })
     })
-    /**
-     * Создать новую комнату (POST /rooms).
-     */
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RoomDto createRoom(@RequestBody CreateOrUpdateRoomDto roomDto) {
         return roomService.createRoom(roomDto);
     }
@@ -73,6 +74,7 @@ public class RoomController {
      * Удалить комнату (DELETE /rooms/{id}).
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
     }
