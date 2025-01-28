@@ -2,6 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
+import ait.cohort49.hostel_casa_flamingo.service.BedServiceImpl;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -21,9 +23,13 @@ import java.util.List;
 public class RoomController {
 
     private final RoomService roomService;
+    private final BedServiceImpl bedServiceImpl;
+    private final BedServiceImpl bedService;
 
-    public RoomController(RoomService roomService) {
+    public RoomController(RoomService roomService, BedServiceImpl bedServiceImpl, BedServiceImpl bedService) {
         this.roomService = roomService;
+        this.bedServiceImpl = bedServiceImpl;
+        this.bedService = bedService;
     }
 
 
@@ -71,5 +77,13 @@ public class RoomController {
     @DeleteMapping("/{id}")
     public void deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
+    }
+
+    /**
+     * Получить общую стоимость кроватей по комнате (GET /rooms/{id}/total_price).
+     */
+    @GetMapping("/{id}/total_price")
+    public BigDecimal getTotalBedPrice(@PathVariable Long id) {
+        return bedService.getTotalBedPriceForRoom(id);
     }
 }

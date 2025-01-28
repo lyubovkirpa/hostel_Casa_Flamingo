@@ -4,6 +4,7 @@ import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BedService {
@@ -17,4 +18,7 @@ public interface BedService {
     List<BedDto> getAllBeds();
 
     void deleteBedById(Long id);
+
+    BigDecimal getTotalBedPriceForRoom(Long roomId);
+
 }
