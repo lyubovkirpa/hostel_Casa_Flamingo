@@ -6,7 +6,6 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
-import ait.cohort49.hostel_casa_flamingo.security.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;

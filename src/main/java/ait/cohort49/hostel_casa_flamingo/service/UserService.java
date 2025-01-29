@@ -1,8 +1,9 @@
-package ait.cohort49.hostel_casa_flamingo.security.service;
+package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
+import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +28,6 @@ public class UserService {
         return userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User with email: " + userEmail + " not found"));
     }
+
+
 }

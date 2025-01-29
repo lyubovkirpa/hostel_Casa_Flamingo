@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -31,6 +30,9 @@ public class User implements UserDetails {
     @Column(name = "tel", nullable = false, length = 15)
     private String tel;
 
+    @Column(name = "is_confirmed", nullable = false)
+    private boolean isConfirmed = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
@@ -59,6 +61,7 @@ public class User implements UserDetails {
         return roles;
     }
 
+
     @Override
     public String getUsername() {
         return email;
@@ -66,6 +69,15 @@ public class User implements UserDetails {
 
     @Column(name = "password")
     private String password;
+
+
+    public boolean isIsConfirmed() {
+        return isConfirmed;
+    }
+
+    public void setIsConfirmed(boolean active) {
+        this.isConfirmed = active;
+    }
 
     public Cart getCart() {
         return cart;
@@ -130,20 +142,19 @@ public class User implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id);
+        if (!(o instanceof User user)) return false;
+        return isConfirmed == user.isConfirmed && Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(tel, user.tel) && Objects.equals(roles, user.roles) && Objects.equals(cart, user.cart) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, firstName, lastName, email, tel, isConfirmed, roles, cart, password);
     }
 
     @Override
     public String toString() {
-        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, roles - %s",
-                id, firstName, lastName, email, tel, roles == null ? "[]" : roles);
+        return String.format("User: id - %d, firstName - %s, lastName - %s, email - %s, tel - %s, active - %s, roles - %s",
+                id, firstName, lastName, email, tel, isConfirmed, roles == null ? "[]" : roles);
     }
 
 
