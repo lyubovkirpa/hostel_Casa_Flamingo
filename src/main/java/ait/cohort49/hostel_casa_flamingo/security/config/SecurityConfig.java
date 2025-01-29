@@ -41,6 +41,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                        "/v3/api-docs/**",    // Allow access to OpenAPI docs
+                                        "/swagger-ui/**",     // Allow access to Swagger UI
+                                        "/swagger-ui.html"
+                                ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth-test/no-auth").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login", "/auth/refresh", "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()

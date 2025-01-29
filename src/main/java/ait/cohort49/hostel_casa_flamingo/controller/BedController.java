@@ -4,6 +4,12 @@ package ait.cohort49.hostel_casa_flamingo.controller;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,6 +17,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/beds")
+@Tag(name = "Bed controller", description = "Controller for operations with beds")
+
 public class BedController {
 
     private final BedService bedService;
@@ -19,11 +27,27 @@ public class BedController {
         this.bedService = bedService;
     }
 
+    @Operation(summary = "Create bed", description = "Add new bed", tags = {"Bed"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BedDto.class)),
+                            @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))
+                    })
+    })
 
     @PostMapping
     public BedDto saveBed(@RequestBody CreateBedDto createBedDto) {
         return bedService.saveBed(createBedDto);
     }
+
+    @Operation(summary = "Get bed by id", tags = {"Bed"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BedDto.class)),
+                            @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Bed not found", content = @Content)
+    })
 
     /**
      * GET /beds/id
