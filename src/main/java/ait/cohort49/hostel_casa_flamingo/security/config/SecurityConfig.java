@@ -51,10 +51,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/beds/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/rooms").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/rooms/**").permitAll()
-
 
                         .requestMatchers(HttpMethod.POST, "/cart/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/cart/**").permitAll()
