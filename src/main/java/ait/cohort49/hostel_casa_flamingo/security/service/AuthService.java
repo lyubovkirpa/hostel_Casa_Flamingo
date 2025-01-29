@@ -10,9 +10,11 @@ import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoleService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
 import io.jsonwebtoken.Claims;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,21 +39,24 @@ public class AuthService {
     private final UserMappingService userMappingService;
     private final RoleRepository roleRepository;
     private final RoleService roleService;
+    private final EmailService emailService;
 
 
     public AuthService(TokenService tokenService,
                        UserDetailsService userService,
                        BCryptPasswordEncoder passwordEncoder,
                        UserRepository userRepository,
-                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService) {
+                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService, EmailService emailService) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.userMappingService = userMappingService;
+        this.emailService = emailService;
         this.refreshStorage = new HashMap<>();
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.roleService = roleService;
+
     }
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -90,7 +95,7 @@ public class AuthService {
         }
         throw new RestException(HttpStatus.FORBIDDEN, "Incorrect refresh token. Re login please");
     }
-
+@Transactional
     public UserDto register(RegisterRequestDTO loginRequestDTO) {
         String hashPassword = passwordEncoder.encode(loginRequestDTO.password());
         String normalizedEmail = normalizeUserEmail(loginRequestDTO.userEmail());
@@ -108,6 +113,12 @@ public class AuthService {
                 userRole);
 
         userRepository.save(user);
+        emailService.sendConfirmationEmail(user);
+
         return userMappingService.mapEntityToDto(user);
+
+
+
     }
+
 }
