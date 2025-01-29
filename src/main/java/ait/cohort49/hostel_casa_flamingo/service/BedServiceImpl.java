@@ -30,8 +30,8 @@ public class BedServiceImpl implements BedService {
     @Override
     public BedDto saveBed(CreateBedDto createBedDto) {
         Bed bed = bedMappingService.mapDtoToEntity(createBedDto);
-       Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
-       bed.setRoom(room);
+        Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
+        bed.setRoom(room);
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 
@@ -60,5 +60,4 @@ public class BedServiceImpl implements BedService {
         getBedOrThrow(id);
         bedRepository.deleteById(id);
     }
-
 }

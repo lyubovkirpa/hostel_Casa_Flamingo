@@ -17,4 +17,5 @@ public interface BedService {
     List<BedDto> getAllBeds();
 
     void deleteBedById(Long id);
+
 }

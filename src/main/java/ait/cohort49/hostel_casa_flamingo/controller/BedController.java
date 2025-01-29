@@ -35,7 +35,11 @@ public class BedController {
                     })
     })
 
+    /**
+     * POST /beds
+     */
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BedDto saveBed(@RequestBody CreateBedDto createBedDto) {
         return bedService.saveBed(createBedDto);
     }
@@ -52,7 +56,6 @@ public class BedController {
     /**
      * GET /beds/id
      */
-
     @GetMapping("/{id}")
     public BedDto getById(@PathVariable("id") Long id) {
         return bedService.getBedById(id);
@@ -61,7 +64,6 @@ public class BedController {
     /**
      * GET /beds
      */
-
     @GetMapping()
     public List<BedDto> getAll() {
         return bedService.getAllBeds();
@@ -75,5 +77,4 @@ public class BedController {
     public void remove(@PathVariable Long id) {
         bedService.deleteBedById(id);
     }
-
 }
