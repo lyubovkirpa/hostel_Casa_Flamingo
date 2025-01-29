@@ -28,6 +28,6 @@ public class UserService {
         return userRepository.findUserByEmail(userEmail)
                 .orElseThrow(() -> new RuntimeException("User with email: " + userEmail + " not found"));
     }
-
-
 }
+
+

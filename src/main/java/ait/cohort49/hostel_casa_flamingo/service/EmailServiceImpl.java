@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
+import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
 import freemarker.cache.ClassTemplateLoader;
@@ -28,13 +29,14 @@ public class EmailServiceImpl implements EmailService {
 
     private final ConfirmationService confirmationService;
 
+
     private final static String HOST = "http:://localhost:8080/api";
 
-    public EmailServiceImpl(JavaMailSender mailSender, Configuration mailCongig, ConfirmationService confirmationService) {
+
+    public EmailServiceImpl(JavaMailSender mailSender, Configuration mailCongig, ConfirmationService confirmationService, ConfirmationCodeRepository confirmationCodeRepository) {
         this.mailSender = mailSender;
         this.mailConfig = mailCongig;
         this.confirmationService = confirmationService;
-
         this.mailConfig.setDefaultEncoding("UTF-8");
         this.mailConfig.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/mail"));
     }

@@ -7,7 +7,10 @@ import ait.cohort49.hostel_casa_flamingo.security.dto.RefreshRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
 import ait.cohort49.hostel_casa_flamingo.security.service.AuthService;
+import ait.cohort49.hostel_casa_flamingo.service.UserService;
+import ait.cohort49.hostel_casa_flamingo.service.UserServiceImpl;
 import jakarta.validation.Valid;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-    public AuthController(AuthService authService) {
+
+    public AuthController(AuthService authService, UserService userService, UserServiceImpl userServiceImpl) {
         this.authService = authService;
+        this.userService = userService;
     }
 
 
@@ -26,6 +32,12 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto register(@RequestBody @Valid RegisterRequestDTO loginRequestDTO) {
         return authService.register(loginRequestDTO);
+    }
+
+    @GetMapping("/confirm")
+    public Response confirm(@RequestParam String code){
+        return new Response(userService.confirmEmail(code));
+
     }
 
     @PostMapping("/login")
