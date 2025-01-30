@@ -1,14 +1,18 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.CartDatesDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/cart")
@@ -38,9 +42,21 @@ public class CartController {
      */
     @PostMapping("/bed/{bedId}")
     @PreAuthorize("isAuthenticated()")
-    public void addBedToCart(@PathVariable Long bedId, @AuthenticationPrincipal String userEmail) {
+    public void addBedToCart(@PathVariable Long bedId,
+                             @AuthenticationPrincipal String userEmail,
+                             @RequestBody
+                             @DateTimeFormat(pattern = "yyyy-MM-dd")
+                             CartDatesDto cartDatesDto) {
+
+        LocalDate entryDate = cartDatesDto.getEntryDate();
+        LocalDate departureDate = cartDatesDto.getDepartureDate();
+
+        if (entryDate.isAfter(departureDate)) {
+            throw new RestException("Entry date cannot be in the past.");
+        }
+
         User user = userService.getUserByEmailOrThrow(userEmail);
-        cartService.addBedToCart(user, bedId);
+        cartService.addBedToCart(user, bedId, entryDate, departureDate);
     }
 
     /**

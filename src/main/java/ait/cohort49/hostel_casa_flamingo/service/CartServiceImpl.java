@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
@@ -8,14 +9,13 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
-
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +60,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addBedToCart(User authUser, Long bedId) {
+    public void addBedToCart(User authUser, Long bedId, LocalDate entryDate, LocalDate departureDate) {
 
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
@@ -73,11 +73,23 @@ public class CartServiceImpl implements CartService {
             authUser.setCart(userCart);
         }
 
+        Optional<CartItemBed> existingCartItem = userCart.getCartItemBeds()
+                .stream()
+                .filter(cartItemBed -> cartItemBed.getBed().equals(foundBed) &&
+                        cartItemBed.getEntryDate().equals(entryDate) &&
+                        cartItemBed.getDepartureDate().equals(departureDate))
+                .findFirst();
+
+        if (existingCartItem.isPresent()) {
+            throw new RestException("The bed with id " + foundBed.getId() + " for the dates from " + entryDate + " to " + departureDate + " is already in the cart.");
+        }
+
         CartItemBed newCartItemBed = new CartItemBed();
         newCartItemBed.setBed(foundBed);
         newCartItemBed.setCart(userCart);
-        newCartItemBed.setEntryDate(ZonedDateTime.now());
-        newCartItemBed.setDepartureDate(ZonedDateTime.now());
+
+        newCartItemBed.setEntryDate(entryDate);
+        newCartItemBed.setDepartureDate(departureDate);
 
         cartItemBedRepository.save(newCartItemBed);
         userCart.getCartItemBeds().add(newCartItemBed);
