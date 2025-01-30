@@ -42,7 +42,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         ConfirmationCode confirmationCode = findOrThrow(confirmationTokenCode);
         LocalDateTime tokenExpiration = confirmationCode.getExpired();
 
-        if (tokenExpiration.isAfter(LocalDateTime.now())) {
+        if (tokenExpiration.isBefore(LocalDateTime.now())) {
             throw new RestException("Token expired");
         }
         repository.delete(confirmationCode);
