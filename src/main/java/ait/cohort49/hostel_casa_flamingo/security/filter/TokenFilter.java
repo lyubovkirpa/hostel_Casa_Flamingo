@@ -26,23 +26,12 @@ public class TokenFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
-        HttpServletRequest request=(HttpServletRequest) servletRequest;
-        String requestURI = request.getRequestURI();
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
 
-        if (requestURI.startsWith("/api/auth/login") ||
-                requestURI.startsWith("/api/auth/register") ||
-                requestURI.startsWith("/api/auth/refresh") ||
-                requestURI.startsWith("/api/beds") ||
-                requestURI.startsWith("/api/rooms") ||
-                requestURI.startsWith("/api/cart")) {
-            filterChain.doFilter(servletRequest, servletResponse);
-            return;
-        }
+        String accessToken = getTokenFromRequest(request);
 
-        String accessToken =getTokenFromRequest(request);
-
-        if ((accessToken !=null && tokenService.validateAccessToken(accessToken))){
-            Claims claims =tokenService.getAccessClaimsFromToken(accessToken);
+        if ((accessToken != null && tokenService.validateAccessToken(accessToken))) {
+            Claims claims = tokenService.getAccessClaimsFromToken(accessToken);
             AuthInfo authInfo = tokenService.mapClaimsToAuthInfo(claims);
             authInfo.setAuthenticated(true);
 
@@ -54,7 +43,7 @@ public class TokenFilter extends GenericFilterBean {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-        if(bearerToken !=null && bearerToken.startsWith("Bearer ")){
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
         return null;

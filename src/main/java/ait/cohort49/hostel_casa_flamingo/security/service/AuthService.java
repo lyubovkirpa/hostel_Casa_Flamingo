@@ -5,6 +5,7 @@ import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
+import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoleRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
@@ -40,18 +41,21 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final EmailService emailService;
+    private final ConfirmationCodeRepository confirmationCodeRepository;
+
 
 
     public AuthService(TokenService tokenService,
                        UserDetailsService userService,
                        BCryptPasswordEncoder passwordEncoder,
                        UserRepository userRepository,
-                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService, EmailService emailService) {
+                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService, EmailService emailService, ConfirmationCodeRepository confirmationCodeRepository) {
         this.tokenService = tokenService;
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.userMappingService = userMappingService;
         this.emailService = emailService;
+        this.confirmationCodeRepository = confirmationCodeRepository;
         this.refreshStorage = new HashMap<>();
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
@@ -97,6 +101,7 @@ public class AuthService {
     }
 @Transactional
     public UserDto register(RegisterRequestDTO loginRequestDTO) {
+
         String hashPassword = passwordEncoder.encode(loginRequestDTO.password());
         String normalizedEmail = normalizeUserEmail(loginRequestDTO.userEmail());
         Optional<User> foundUser = userRepository.findUserByEmail(normalizedEmail);
@@ -117,8 +122,7 @@ public class AuthService {
 
         return userMappingService.mapEntityToDto(user);
 
-
-
     }
+
 
 }
