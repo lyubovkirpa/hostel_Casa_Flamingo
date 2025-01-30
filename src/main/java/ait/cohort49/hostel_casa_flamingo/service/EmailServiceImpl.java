@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
 import freemarker.cache.ClassTemplateLoader;
@@ -10,6 +9,7 @@ import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -29,11 +29,10 @@ public class EmailServiceImpl implements EmailService {
 
     private final ConfirmationService confirmationService;
 
+    @Value("${base-url}")
+    private String baseUrl;
 
-    private final static String HOST = "http:://localhost:8080/api";
-
-
-    public EmailServiceImpl(JavaMailSender mailSender, Configuration mailCongig, ConfirmationService confirmationService, ConfirmationCodeRepository confirmationCodeRepository) {
+    public EmailServiceImpl(JavaMailSender mailSender, Configuration mailCongig, ConfirmationService confirmationService) {
         this.mailSender = mailSender;
         this.mailConfig = mailCongig;
         this.confirmationService = confirmationService;
@@ -59,7 +58,6 @@ public class EmailServiceImpl implements EmailService {
             helper.setText(emailText, true);
             mailSender.send(message);
 
-
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
@@ -68,30 +66,19 @@ public class EmailServiceImpl implements EmailService {
 
     private String generateEmailText(User user) {
         try {
-//            загрузка шаблона письма
             Template template = mailConfig.getTemplate("confirm_reg_mail.ftlh");
 
-//            генерация кода подтверждения
             String code = confirmationService.generateConfirmationCode(user);
 
-//            сформировать ссылку http:://localhost:8080/api/confirm?code=сгенерированнный код
+            String confirmationLink = baseUrl + "/auth/confirm?code=" + code;
 
-            String confirmationLink = HOST + "confirm?code=" + code;
-
-//            модель данных для подстановки в шаблон
             Map<String, Object> modelPattern = new HashMap<>();
             modelPattern.put("name", user.getFirstName());
             modelPattern.put("confirmationLink", confirmationLink);
 
-//            педаем модель в шаблон, чтобы получить текст письма
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, modelPattern);
-
-
         } catch (IOException | TemplateException e) {
             throw new RuntimeException(e);
-
         }
     }
-
-
 }
