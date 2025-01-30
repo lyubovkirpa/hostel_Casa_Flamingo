@@ -46,7 +46,7 @@ public class SecurityConfig {
                                 "/auth/login",
                                 "/auth/refresh",
                                 "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/confirm").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/confirm").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
