@@ -6,7 +6,6 @@ import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.service.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +44,6 @@ public class CartController {
     public void addBedToCart(@PathVariable Long bedId,
                              @AuthenticationPrincipal String userEmail,
                              @RequestBody
-                             @DateTimeFormat(pattern = "yyyy-MM-dd")
                              CartDatesDto cartDatesDto) {
 
         LocalDate entryDate = cartDatesDto.getEntryDate();
