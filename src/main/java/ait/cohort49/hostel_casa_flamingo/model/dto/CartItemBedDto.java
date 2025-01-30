@@ -1,14 +1,14 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 
 public class CartItemBedDto {
 
     private Long id;
-    private ZonedDateTime entryDate;
-    private ZonedDateTime departureDate;
+    private LocalDate entryDate;
+    private LocalDate departureDate;
     private BedDto bed;
     private Long cartId;
 
@@ -20,19 +20,19 @@ public class CartItemBedDto {
         this.id = id;
     }
 
-    public ZonedDateTime getEntryDate() {
+    public LocalDate getEntryDate() {
         return entryDate;
     }
 
-    public void setEntryDate(ZonedDateTime entryDate) {
+    public void setEntryDate(LocalDate entryDate) {
         this.entryDate = entryDate;
     }
 
-    public ZonedDateTime getDepartureDate() {
+    public LocalDate getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(ZonedDateTime departureDate) {
+    public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
     }
 
