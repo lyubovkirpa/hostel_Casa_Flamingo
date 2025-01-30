@@ -1,9 +1,11 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.entity.ConfirmationCode;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,5 +34,25 @@ public class ConfirmationServiceImpl implements ConfirmationService {
 
         repository.save(confirmationCode);
         return code;
+    }
+
+    @Transactional
+    @Override
+    public ConfirmationCode validateToken(String confirmationTokenCode) {
+        ConfirmationCode confirmationCode = findOrThrow(confirmationTokenCode);
+        LocalDateTime tokenExpiration = confirmationCode.getExpired();
+
+        if (tokenExpiration.isAfter(LocalDateTime.now())) {
+            throw new RestException("Token expired");
+        }
+        repository.delete(confirmationCode);
+        return confirmationCode;
+    }
+
+    @Transactional
+    @Override
+    public ConfirmationCode findOrThrow(String code) {
+        return repository.findByCode(code)
+                .orElseThrow(() -> new RuntimeException("Confirmation code not found"));
     }
 }
