@@ -1,8 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 
-import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
+import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
+import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 
 public interface UserService {
-   void register (RegisterRequestDTO registerRequestDTO);
-   String confirmEmail(String code);
+
+    UserDto findUserByEmailOrThrow(String userEmail);
+
+    User getUserByEmailOrThrow(String userEmail);
+
+    UserDto confirmUser(String confirmationToken);
 }

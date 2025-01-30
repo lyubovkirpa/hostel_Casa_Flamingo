@@ -1,7 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
-import ait.cohort49.hostel_casa_flamingo.service.UserService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.UserService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +21,6 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public UserDto getMe(@AuthenticationPrincipal String userEmail) {
-       return userService.findUserByEmailOrThrow(userEmail);
+        return userService.findUserByEmailOrThrow(userEmail);
     }
 }
