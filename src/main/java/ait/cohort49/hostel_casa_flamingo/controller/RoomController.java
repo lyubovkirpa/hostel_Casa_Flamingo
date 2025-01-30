@@ -35,6 +35,14 @@ public class RoomController {
         this.roomService = roomService;
     }
 
+
+    @Operation(summary = "Creates list of rooms with given input array", tags = {"room"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = RoomDto.class))
+            )
+    })
+
     /**
      * Получить список всех комнат (GET /rooms).
      */
@@ -42,6 +50,7 @@ public class RoomController {
     public List<RoomDto> getAllRooms() {
         return roomService.getAllRooms();
     }
+
 
     @Operation(summary = "Get room by id", tags = {"Room"})
     @ApiResponses(value = {
@@ -58,7 +67,6 @@ public class RoomController {
     }
 
 
-
     @Operation(summary = "Create room", description = "Add new room", tags = {"Room"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
@@ -66,6 +74,9 @@ public class RoomController {
             ),
             @ApiResponse(responseCode = "401", description = "User not authenticated",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+            ),
+            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
             )
     })
     /**
@@ -77,6 +88,19 @@ public class RoomController {
         return roomService.createRoom(roomDto);
     }
 
+
+    @Operation(summary = "Delete room", description = "ID of the room that needs to be deleted", tags = {"Room"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoomDto.class))
+            ),
+            @ApiResponse(responseCode = "401", description = "User not authenticated",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+            ),
+            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
+            ),
+    })
     /**
      * Удалить комнату (DELETE /rooms/{id}).
      */

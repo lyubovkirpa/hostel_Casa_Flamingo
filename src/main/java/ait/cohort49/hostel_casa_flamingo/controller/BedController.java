@@ -30,9 +30,16 @@ public class BedController {
     @Operation(summary = "Create bed", description = "Add new bed", tags = {"Bed"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BedDto.class)),
+                    content = {
+                            @Content(mediaType = "application/json", schema = @Schema(implementation = BedDto.class)),
                             @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))
-                    })
+                    }),
+            @ApiResponse(responseCode = "401", description = "User not authenticated",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+            ),
+            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
+            )
     })
 
     /**
@@ -47,9 +54,8 @@ public class BedController {
     @Operation(summary = "Get bed by id", tags = {"Bed"})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BedDto.class)),
-                            @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))}),
-            @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))
+            ),
             @ApiResponse(responseCode = "404", description = "Bed not found", content = @Content)
     })
 
@@ -61,6 +67,13 @@ public class BedController {
         return bedService.getBedById(id);
     }
 
+
+    @Operation(summary = "Creates list of beds with given input array", tags = {"bed"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))
+            )
+    })
     /**
      * GET /beds
      */
@@ -69,6 +82,19 @@ public class BedController {
         return bedService.getAllBeds();
     }
 
+
+    @Operation(summary = "Delete bed", description = "ID of the bed that needs to be deleted", tags = {"bed"})
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "successful operation",
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = BedDto.class))
+            ),
+            @ApiResponse(responseCode = "401", description = "User not authenticated",
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+            ),
+            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
+                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
+            ),
+    })
     /**
      * DELETE  /beds/id
      */
