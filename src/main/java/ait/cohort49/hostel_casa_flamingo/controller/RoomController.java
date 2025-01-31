@@ -4,11 +4,11 @@ import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/rooms")
-@Tag(name = "Room controller", description = "Controller for operations with rooms")
+@Tag(name = "Room", description = "Controller for operations with rooms")
 
 public class RoomController {
 
@@ -36,10 +36,14 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Creates list of rooms with given input array", tags = {"room"})
+    @Operation(summary = "Get all rooms", description = "Retrieve a list of all rooms")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = RoomDto.class))
+                    content = {@Content(mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = RoomDto.class))),
+                            @Content(mediaType = "application/xml",
+                                    array = @ArraySchema(schema = @Schema(implementation = RoomDto.class)))
+                    }
             )
     })
 
@@ -52,11 +56,18 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Get room by id", tags = {"Room"})
+    @Operation(summary = "Get room by id", description = "Retrieve room details by its ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = @Content(mediaType = "application/xml", schema = @Schema(implementation = RoomDto.class))),
-            @ApiResponse(responseCode = "404", description = "Room not found", content = @Content)
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = RoomDto.class)),
+                            @Content(mediaType = "application/xml",
+                                    schema = @Schema(implementation = RoomDto.class))
+                    }),
+            @ApiResponse(responseCode = "404", description = "Room not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "Room not found"))
+            )
     })
     /**
      * Найти комнату по ID (GET /rooms/{id}).
@@ -67,16 +78,21 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Create room", description = "Add new room", tags = {"Room"})
+    @Operation(summary = "Create room", description = "Add a new room")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoomDto.class))
-            ),
+            @ApiResponse(responseCode = "201", description = "Room created",
+                    content = {@Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = RoomDto.class)),
+                            @Content(mediaType = "application/xml",
+                                    schema = @Schema(implementation = RoomDto.class))
+                    }),
             @ApiResponse(responseCode = "401", description = "User not authenticated",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User not authenticated"))
             ),
-            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
+            @ApiResponse(responseCode = "403", description = "User doesn't have rights",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User doesn't have rights"))
             )
     })
     /**
@@ -84,32 +100,56 @@ public class RoomController {
      */
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.CREATED)
     public RoomDto createRoom(@RequestBody CreateOrUpdateRoomDto roomDto) {
         return roomService.createRoom(roomDto);
     }
 
 
-    @Operation(summary = "Delete room", description = "ID of the room that needs to be deleted", tags = {"Room"})
+    @Operation(summary = "Delete room", description = "Delete room by ID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "successful operation",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RoomDto.class))
+            @ApiResponse(responseCode = "204", description = "Room deleted",
+                    content = @Content
             ),
             @ApiResponse(responseCode = "401", description = "User not authenticated",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User not authenticated"))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User not authenticated"))
             ),
-            @ApiResponse(responseCode = "403", description = "User doesn't has rights",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
+            @ApiResponse(responseCode = "403", description = "User doesn't have rights",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
             ),
+            @ApiResponse(responseCode = "404", description = "Room not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "Room not found"))
+            )
     })
     /**
      * Удалить комнату (DELETE /rooms/{id}).
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRoom(@PathVariable Long id) {
         roomService.deleteRoom(id);
     }
 
+
+    @Operation(summary = "Get total bed price", description = "Retrieve the total price of beds in the specified room")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful operation",
+                    content = {
+                            @Content(mediaType = "application/json",
+                                    schema = @Schema(type = "number", example = "120.99")),
+                            @Content(mediaType = "application/xml",
+                                    schema = @Schema(type = "number", example = "120.99"))
+                    }
+            ),
+            @ApiResponse(responseCode = "404", description = "Room not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "Room not found"))
+            )
+    })
     /**
      * Получить общую стоимость кроватей по комнате (GET /rooms/{id}/total_price).
      */
