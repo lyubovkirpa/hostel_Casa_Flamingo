@@ -10,6 +10,9 @@ spring:
     username: ${DB_USERNAME:my_user}
     password: ${DB_PASS:pos1234}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 1
   application:
     name: Hostel_Casa_Flamingo
 
