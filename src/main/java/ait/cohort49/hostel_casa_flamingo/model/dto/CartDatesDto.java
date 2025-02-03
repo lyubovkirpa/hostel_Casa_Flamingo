@@ -1,20 +1,12 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import jakarta.validation.constraints.FutureOrPresent;
-import org.springframework.format.annotation.DateTimeFormat;
-
 import java.time.LocalDate;
 import java.util.Objects;
 
 
 public class CartDatesDto {
 
-    @FutureOrPresent
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate entryDate;
-
-    @FutureOrPresent
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureDate;
 
     public LocalDate getEntryDate() {

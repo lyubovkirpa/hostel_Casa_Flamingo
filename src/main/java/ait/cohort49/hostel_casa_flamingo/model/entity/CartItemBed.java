@@ -1,6 +1,8 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -16,9 +18,13 @@ public class CartItemBed {
     private Long id;
 
     @Column(name = "entry_date", nullable = false)
+    @FutureOrPresent
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate entryDate;
 
     @Column(name = "departure_date", nullable = false)
+    @FutureOrPresent
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate departureDate;
 
     @ManyToOne
