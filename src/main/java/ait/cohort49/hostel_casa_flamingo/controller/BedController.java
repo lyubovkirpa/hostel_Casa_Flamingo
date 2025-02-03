@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -58,7 +59,7 @@ public class BedController {
         return bedService.saveBed(createBedDto);
     }
 
-    @Operation(summary = "Get bed by id", description = "Retrieve bed by its ID")
+    @Operation(summary = "Get bed by id", description = "Retrieve bed by its ID", security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = {@Content(mediaType = "application/json",
@@ -81,7 +82,7 @@ public class BedController {
     }
 
 
-    @Operation(summary = "Get all beds", description = "Returns a list of all beds")
+    @Operation(summary = "Get all beds", description = "Returns a list of all beds", security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "List of beds",
                     content = {@Content(mediaType = "application/json",

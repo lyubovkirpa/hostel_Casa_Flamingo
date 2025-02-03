@@ -4,19 +4,15 @@ import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.*;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -36,7 +32,8 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Get all rooms", description = "Retrieve a list of all rooms")
+    @Operation(summary = "Get all rooms", description = "Retrieve a list of all rooms",
+            security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = {@Content(mediaType = "application/json",
@@ -56,7 +53,8 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Get room by id", description = "Retrieve room details by its ID")
+    @Operation(summary = "Get room by id", description = "Retrieve room details by its ID",
+            security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "successful operation",
                     content = {@Content(mediaType = "application/json",
@@ -82,7 +80,7 @@ public class RoomController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Room created",
                     content = {@Content(mediaType = "application/json",
-                                    schema = @Schema(implementation = RoomDto.class)),
+                            schema = @Schema(implementation = RoomDto.class)),
                             @Content(mediaType = "application/xml",
                                     schema = @Schema(implementation = RoomDto.class))
                     }),
@@ -135,7 +133,8 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Get total bed price", description = "Retrieve the total price of beds in the specified room")
+    @Operation(summary = "Get total bed price", description = "Retrieve the total price of beds in the specified room",
+            security = @SecurityRequirement(name = ""))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful operation",
                     content = {
