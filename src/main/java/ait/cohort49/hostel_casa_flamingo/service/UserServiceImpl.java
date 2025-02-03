@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.userMappingService = userMappingService;
         this.confirmationService = confirmationService;
+        System.out.println("UserServiceImpl initialized");
     }
 
     @Override
