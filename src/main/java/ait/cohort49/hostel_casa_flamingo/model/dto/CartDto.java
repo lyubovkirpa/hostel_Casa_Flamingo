@@ -2,6 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,8 @@ public class CartDto {
 
     private Long id;
     private List<CartItemBedDto> beds;
+    private Long countBeds;
+    private BigDecimal totalPriceBeds;
 
     @JsonBackReference
     private UserDto userDto;
@@ -38,6 +41,22 @@ public class CartDto {
         this.userDto = userDto;
     }
 
+    public Long getCountBeds() {
+        return countBeds;
+    }
+
+    public void setCountBeds(Long countBeds) {
+        this.countBeds = countBeds;
+    }
+
+    public BigDecimal getTotalPriceBeds() {
+        return totalPriceBeds;
+    }
+
+    public void setTotalPriceBeds(BigDecimal totalPriceBeds) {
+        this.totalPriceBeds = totalPriceBeds;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -53,7 +72,7 @@ public class CartDto {
 
     @Override
     public String toString() {
-        return String.format("CartDto: id - %d, cartItemBeds - %s",
-                this.id, beds);
+        return String.format("CartDto: id - %d, cartItemBeds - %s, countBeds- %s, totalPriceBeds - %s",
+                this.id, beds, countBeds, totalPriceBeds);
     }
 }

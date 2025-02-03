@@ -2,7 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 
@@ -16,10 +16,10 @@ public class CartItemBed {
     private Long id;
 
     @Column(name = "entry_date", nullable = false)
-    private ZonedDateTime entryDate;
+    private LocalDate entryDate;
 
     @Column(name = "departure_date", nullable = false)
-    private ZonedDateTime departureDate;
+    private LocalDate departureDate;
 
     @ManyToOne
     @JoinColumn(name = "bed_id")
@@ -33,19 +33,19 @@ public class CartItemBed {
         return id;
     }
 
-    public ZonedDateTime getEntryDate() {
+    public LocalDate getEntryDate() {
         return entryDate;
     }
 
-    public void setEntryDate(ZonedDateTime entryDate) {
+    public void setEntryDate(LocalDate entryDate) {
         this.entryDate = entryDate;
     }
 
-    public ZonedDateTime getDepartureDate() {
+    public LocalDate getDepartureDate() {
         return departureDate;
     }
 
-    public void setDepartureDate(ZonedDateTime departureDate) {
+    public void setDepartureDate(LocalDate departureDate) {
         this.departureDate = departureDate;
     }
 

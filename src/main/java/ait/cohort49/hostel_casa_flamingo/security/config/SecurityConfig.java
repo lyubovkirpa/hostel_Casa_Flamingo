@@ -42,15 +42,17 @@ public class SecurityConfig {
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                        "/v3/api-docs/**",    // Allow access to OpenAPI docs
-                                        "/swagger-ui/**",     // Allow access to Swagger UI
-                                        "/swagger-ui.html"
-                                ).permitAll()
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/v1/users"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth-test/no-auth").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/login",
                                 "/auth/refresh",
                                 "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/confirm").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds").permitAll()
                         .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()

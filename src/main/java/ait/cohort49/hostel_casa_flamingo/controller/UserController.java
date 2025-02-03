@@ -1,7 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
-import ait.cohort49.hostel_casa_flamingo.service.UserService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -40,11 +40,11 @@ public class UserController {
             ),
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = @Content(mediaType = "application/json",
-    schema = @Schema(implementation = String.class, example = "User not found")))
+                            schema = @Schema(implementation = String.class, example = "User not found")))
     })
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public UserDto getMe(@AuthenticationPrincipal String userEmail) {
-       return userService.findUserByEmailOrThrow(userEmail);
+        return userService.findUserByEmailOrThrow(userEmail);
     }
 }
