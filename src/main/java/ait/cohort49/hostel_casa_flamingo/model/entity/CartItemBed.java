@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.FutureOrPresent;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -16,9 +17,11 @@ public class CartItemBed {
     private Long id;
 
     @Column(name = "entry_date", nullable = false)
+    @FutureOrPresent
     private LocalDate entryDate;
 
     @Column(name = "departure_date", nullable = false)
+    @FutureOrPresent
     private LocalDate departureDate;
 
     @ManyToOne
