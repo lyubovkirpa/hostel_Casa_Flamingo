@@ -1,17 +1,45 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-
+@Schema(description = "DTO representing a user")
 public class UserDto {
 
+    @Schema(
+            description = "Unique identifier of the user",
+            example = "1"
+    )
     private Long id;
+
+    @Schema(
+            description = "User's first name",
+            example = "John"
+    )
     private String firstName;
+
+    @Schema(
+            description = "User's last name",
+            example = "Doe"
+    )
     private String lastName;
+
+    @Schema(
+            description = "User's email address",
+            example = "john.doe@example.com"
+    )
     private String email;
+
+    @Schema(
+            description = "User's telephone number",
+            example = "+1234567890"
+    )
     private String tel;
+
+    @Schema(description = "Set of roles assigned to the user")
     private Set<RoleDto> roles = new HashSet<>();
 
     public Long getId() {
