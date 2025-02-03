@@ -1,10 +1,22 @@
 package ait.cohort49.hostel_casa_flamingo.security.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.Objects;
 
+@Schema(description = "DTO representing the token response containing access and refresh tokens")
 public class TokenResponseDTO {
 
+    @Schema(
+            description = "Refresh token",
+            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    )
     private String refreshToken;
+
+    @Schema(
+            description = "Access token",
+            example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    )
     private String accessToken;
 
     public TokenResponseDTO() {

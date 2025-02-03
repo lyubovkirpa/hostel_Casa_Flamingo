@@ -1,17 +1,25 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-
+@Schema(description = "DTO representing the shopping cart")
 public class CartDto {
 
+    @Schema(description = "Unique identifier of the cart", example = "1")
     private Long id;
+
+    @Schema(description = "List of bed items in the cart")
     private List<CartItemBedDto> beds;
+
+    @Schema(description = "Count of beds in the cart", example = "2")
     private Long countBeds;
+
+    @Schema(description = "Total price of beds in the cart", type = "number", example = "299.99")
     private BigDecimal totalPriceBeds;
 
     @JsonBackReference
