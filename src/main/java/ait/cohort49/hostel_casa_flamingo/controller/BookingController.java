@@ -23,19 +23,18 @@ public class BookingController {
     public BookingController(BookingService bookingService, UserService userService) {
         this.bookingService = bookingService;
         this.userService = userService;
-        System.out.println("BookingController initialized with UserService: " + userService);
     }
 
     @PostMapping("/confirm")
     @PreAuthorize("isAuthenticated()")
-    private List<BookingDto> createBooking(@AuthenticationPrincipal String userEmail) {
+    public List<BookingDto> createBooking(@AuthenticationPrincipal String userEmail) {
         User user = userService.getUserByEmailOrThrow(userEmail);
         return bookingService.createBookingFromCart(user);
     }
 
     @GetMapping("/get")
     @PreAuthorize("isAuthenticated()")
-    private List<BookingDto> getBooking(@AuthenticationPrincipal String userEmail) {
+    public List<BookingDto> getBooking(@AuthenticationPrincipal String userEmail) {
         User user = userService.getUserByEmailOrThrow(userEmail);
         return bookingService.getBooking(user);
     }
