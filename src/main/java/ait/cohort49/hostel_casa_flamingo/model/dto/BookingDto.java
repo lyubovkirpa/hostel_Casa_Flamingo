@@ -15,6 +15,19 @@ public class BookingDto {
     private UserDto user;
     private BedDto bed;
 
+    /*
+     * временное поле, необходимо для email
+     */
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     public Long getId() {
         return id;
     }
