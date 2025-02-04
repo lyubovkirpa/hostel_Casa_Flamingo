@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
+import java.util.UUID;
 
 @Entity
 @Table(name = "booking")
@@ -35,6 +36,18 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "bed_id", nullable = false)
     private Bed bed;
+
+    public Booking(LocalDate entryDate, LocalDate departureDate, BigDecimal totalPrice, User user, Bed bed) {
+        this.entryDate = entryDate;
+        this.departureDate = departureDate;
+        this.totalPrice = totalPrice;
+        this.bookingNumber = UUID.randomUUID().toString();
+        this.user = user;
+        this.bed = bed;
+    }
+
+    public Booking() {
+    }
 
     public Long getId() {
         return id;
