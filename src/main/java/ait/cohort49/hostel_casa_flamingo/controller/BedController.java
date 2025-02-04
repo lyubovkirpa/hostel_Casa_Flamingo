@@ -12,10 +12,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.FutureOrPresent;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -128,5 +131,18 @@ public class BedController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void remove(@PathVariable Long id) {
         bedService.deleteBedById(id);
+    }
+
+    @GetMapping("/available-beds")
+    public List<BedDto> getAvailableBeds(@FutureOrPresent
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                         @Schema(description = "Entry date", type = "string", format = "date", example = "2025-02-10")
+                                         @RequestParam LocalDate entryDate,
+
+                                         @FutureOrPresent
+                                         @DateTimeFormat(pattern = "yyyy-MM-dd")
+                                         @Schema(description = "Departure date", type = "string", format = "date", example = "2025-02-15")
+                                         @RequestParam LocalDate departureDate) {
+        return bedService.getAvailableBeds(entryDate, departureDate);
     }
 }
