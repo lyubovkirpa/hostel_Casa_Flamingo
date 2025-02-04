@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BookingDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Booking;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
@@ -12,6 +13,7 @@ import ait.cohort49.hostel_casa_flamingo.service.mapping.BookingMappingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,9 +49,17 @@ public class BookingServiceImpl implements BookingService {
 
         List<Booking> bookingList = new ArrayList<>();
         for (CartItemBed cartItemBed : cartItemBeds) {
+            Long bedId = cartItemBed.getBed().getId();
+            LocalDate entryDate = cartItemBed.getEntryDate();
+            LocalDate departureDate = cartItemBed.getDepartureDate();
+
+            if (bookingRepository.isBedBooked(bedId, entryDate, departureDate)) {
+                throw new RestException("Кровать " + bedId + " уже забронирована на указанные даты");
+            }
+
             Booking booking = new Booking(
-                    cartItemBed.getEntryDate(),
-                    cartItemBed.getDepartureDate(),
+                    entryDate,
+                    departureDate,
                     cartService.getTotalPrice(authUser),
                     authUser,
                     cartItemBed.getBed()
