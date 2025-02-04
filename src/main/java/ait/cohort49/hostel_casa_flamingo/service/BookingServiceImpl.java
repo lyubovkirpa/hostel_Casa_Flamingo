@@ -58,8 +58,8 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.saveAll(bookingList);
-//        authUser.setCart(null);
-//        cartService.delete(cart);
+        authUser.setCart(null);
+        cartService.delete(cart);
 
         List<BookingDto> mappedBookingDtos = bookingList
                 .stream()
