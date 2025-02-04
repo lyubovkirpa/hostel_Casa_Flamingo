@@ -10,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.service.interfaces.BookingService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BookingMappingService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,17 +21,21 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final CartService cartService;
     private final BookingMappingService bookingMappingService;
+    private final BookingEmailService bookingEmailService;
 
 
     public BookingServiceImpl(BookingRepository bookingRepository,
                               CartService cartService,
-                              BookingMappingService bookingMappingService) {
+                              BookingMappingService bookingMappingService,
+                              BookingEmailService bookingEmailService) {
         this.bookingRepository = bookingRepository;
         this.cartService = cartService;
         this.bookingMappingService = bookingMappingService;
+        this.bookingEmailService = bookingEmailService;
     }
 
     @Override
+    @Transactional
     public List<BookingDto> createBookingFromCart(User authUser) {
 
         Cart cart = cartService.getCartEntity(authUser);
@@ -53,11 +58,15 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.saveAll(bookingList);
-        cartService.delete(cart);
-        return bookingList
+//        authUser.setCart(null);
+//        cartService.delete(cart);
+
+        List<BookingDto> mappedBookingDtos = bookingList
                 .stream()
                 .map(bookingMappingService::mapEntityToDto)
                 .toList();
+        bookingEmailService.sendBookingConfirmationEmail(mappedBookingDtos, authUser);
+        return mappedBookingDtos;
     }
 
     @Override

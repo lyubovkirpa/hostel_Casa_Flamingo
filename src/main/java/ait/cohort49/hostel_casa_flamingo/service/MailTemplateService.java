@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.BookingDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import freemarker.cache.ClassTemplateLoader;
 import freemarker.template.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,4 +40,19 @@ public class MailTemplateService {
             throw new RuntimeException(e);
         }
     }
+
+    public String generateBookingConfirmationEmail(User user, List<BookingDto> bookings) {
+        try {
+            Template template = mailConfig.getTemplate("booking_confirmation.ftlh");
+
+            Map<String, Object> model = new HashMap<>();
+            model.put("user", user);
+            model.put("bookings", bookings);
+
+            return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        } catch (IOException | TemplateException e) {
+            throw new RuntimeException("Ошибка при генерации email-шаблона", e);
+        }
+    }
+
 }
