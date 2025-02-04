@@ -39,7 +39,7 @@ public class AuthController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "User successfully registered",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDto.class))),
-                    @ApiResponse(responseCode = "400", description = "Validation error or user with the provided email already exists",
+                    @ApiResponse(responseCode = "409", description = "Validation error or user with the provided email already exists",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ExceptionResponseDto.class)))
             }
     )

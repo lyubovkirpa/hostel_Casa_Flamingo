@@ -5,9 +5,9 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 
 import java.util.List;
 
-public interface EmailService {
+public interface BookingService {
 
-    void sendConfirmationEmail(User user, String code);
+    List<BookingDto> createBookingFromCart(User authUser);
 
-    void sendBookingConfirmEmail(List<BookingDto> bookings, User user);
+    List<BookingDto> getBooking(User authUser);
 }

@@ -20,4 +20,6 @@ public interface CartService {
     BigDecimal getTotalPrice(User authUser);
 
     void clearUserCart(User authUser);
+
+    void delete(Cart cart);
 }

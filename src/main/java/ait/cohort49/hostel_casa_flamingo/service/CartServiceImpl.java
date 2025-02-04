@@ -56,7 +56,16 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart getCartEntity(User authUser) {
-        return authUser.getCart();
+        return cartRepository.findByUser(authUser)
+                .orElseGet(() -> {
+                            Cart userCart = new Cart();
+                            userCart.setUser(authUser);
+                            cartRepository.save(userCart);
+                            authUser.setCart(userCart);
+                            userRepository.save(authUser);
+                            return userCart;
+                        }
+                );
     }
 
     @Override
@@ -64,14 +73,6 @@ public class CartServiceImpl implements CartService {
 
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
-
-        if (userCart == null) {
-            userCart = new Cart();
-            userCart.setUser(authUser);
-            cartRepository.save(userCart);
-            userRepository.save(authUser);
-            authUser.setCart(userCart);
-        }
 
         Optional<CartItemBed> existingCartItem = userCart.getCartItemBeds()
                 .stream()
@@ -127,5 +128,10 @@ public class CartServiceImpl implements CartService {
         cartEntity.getCartItemBeds().clear();
 
         cartRepository.save(cartEntity);
+    }
+
+    @Override
+    public void delete(Cart cart) {
+        cartRepository.delete(cart);
     }
 }

@@ -1,56 +1,39 @@
-package ait.cohort49.hostel_casa_flamingo.model.entity;
-
-import jakarta.persistence.*;
+package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.UUID;
 
-@Entity
-@Table(name = "booking")
-public class Booking {
 
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookingDto {
+
     private Long id;
-
-    @Column(name = "entry_date", nullable = false)
     private LocalDate entryDate;
-
-    @Column(name = "departure_date", nullable = false)
     private LocalDate departureDate;
-
-
-    @Column(name = "total_price")
     private BigDecimal totalPrice;
-
-    @Column(name = "booking_number", nullable = false, unique = true)
     private String bookingNumber;
+    private UserDto user;
+    private BedDto bed;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    /*
+     * временное поле, необходимо для email
+     */
+    private String imageUrl;
 
-    @ManyToOne
-    @JoinColumn(name = "bed_id", nullable = false)
-    private Bed bed;
-
-    public Booking(LocalDate entryDate, LocalDate departureDate, BigDecimal totalPrice, User user, Bed bed) {
-        this.entryDate = entryDate;
-        this.departureDate = departureDate;
-        this.totalPrice = totalPrice;
-        this.bookingNumber = UUID.randomUUID().toString();
-        this.user = user;
-        this.bed = bed;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public Booking() {
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDate getEntryDate() {
@@ -85,19 +68,19 @@ public class Booking {
         this.bookingNumber = bookingNumber;
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDto user) {
         this.user = user;
     }
 
-    public Bed getBed() {
+    public BedDto getBed() {
         return bed;
     }
 
-    public void setBed(Bed bed) {
+    public void setBed(BedDto bed) {
         this.bed = bed;
     }
 
@@ -105,18 +88,18 @@ public class Booking {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Booking booking = (Booking) o;
-        return Objects.equals(id, booking.id);
+        BookingDto that = (BookingDto) o;
+        return Objects.equals(id, that.id) && Objects.equals(entryDate, that.entryDate) && Objects.equals(departureDate, that.departureDate) && Objects.equals(totalPrice, that.totalPrice) && Objects.equals(bookingNumber, that.bookingNumber) && Objects.equals(user, that.user) && Objects.equals(bed, that.bed);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id, entryDate, departureDate, totalPrice, bookingNumber, user, bed);
     }
 
     @Override
     public String toString() {
-        return "Booking{" +
+        return "BookingDto{" +
                 "id=" + id +
                 ", entryDate=" + entryDate +
                 ", departureDate=" + departureDate +
