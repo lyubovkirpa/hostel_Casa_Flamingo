@@ -7,3 +7,20 @@ spring:
 
   liquibase:
     enabled: false
+
+  mail:
+    username: fake
+    password: fake
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            protocols: TLSv1.2
+            trust: smtp.gmail.com
+
+base-url: http://localhost:8080/api
