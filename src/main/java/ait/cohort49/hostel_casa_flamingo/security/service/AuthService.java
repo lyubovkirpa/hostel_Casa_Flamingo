@@ -5,12 +5,11 @@ import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.UserDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
-import ait.cohort49.hostel_casa_flamingo.repository.RoleRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.security.dto.LoginRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.RegisterRequestDTO;
 import ait.cohort49.hostel_casa_flamingo.security.dto.TokenResponseDTO;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoleService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
@@ -31,37 +30,39 @@ import static ait.cohort49.hostel_casa_flamingo.service.mapping.UserEmailUtils.n
 @Service
 public class AuthService {
 
-    public static final String DEFAULD_USER_ROLE_NAME = "ROLE_USER";
+    public static final String DEFAULT_USER_ROLE = "ROLE_USER";
+
+    private final Map<String, String> refreshStorage;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    private final UserMappingService userMappingService;
     private final TokenService tokenService;
     private final UserDetailsService userService;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final Map<String, String> refreshStorage;
     private final UserRepository userRepository;
-    private final UserMappingService userMappingService;
-    private final RoleRepository roleRepository;
     private final RoleService roleService;
     private final EmailService emailService;
-    private final ConfirmationCodeRepository confirmationCodeRepository;
+    private final ConfirmationService confirmationService;
 
-
-
-    public AuthService(TokenService tokenService,
-                       UserDetailsService userService,
-                       BCryptPasswordEncoder passwordEncoder,
-                       UserRepository userRepository,
-                       UserMappingService userMappingService, RoleRepository roleRepository, RoleService roleService, EmailService emailService, ConfirmationCodeRepository confirmationCodeRepository) {
-        this.tokenService = tokenService;
-        this.userService = userService;
+    public AuthService(
+            BCryptPasswordEncoder passwordEncoder,
+            UserMappingService userMappingService,
+            TokenService tokenService,
+            UserDetailsService userService,
+            UserRepository userRepository,
+            RoleService roleService,
+            EmailService emailService,
+            ConfirmationService confirmationService) {
+        this.refreshStorage = new HashMap<>();
         this.passwordEncoder = passwordEncoder;
         this.userMappingService = userMappingService;
-        this.emailService = emailService;
-        this.confirmationCodeRepository = confirmationCodeRepository;
-        this.refreshStorage = new HashMap<>();
+        this.tokenService = tokenService;
+        this.userService = userService;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.roleService = roleService;
-
+        this.emailService = emailService;
+        this.confirmationService = confirmationService;
     }
+
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO) {
         String username = normalizeUserEmail(loginRequestDTO.userEmail());
@@ -75,8 +76,7 @@ public class AuthService {
             return new TokenResponseDTO(accessToken, refreshToken);
         }
 
-        throw new RestException(HttpStatus.UNAUTHORIZED, "Incorrect login and/ or password");
-
+        throw new RestException(HttpStatus.UNAUTHORIZED, "Incorrect login and/or password");
     }
 
     public TokenResponseDTO refreshAccessToken(String refreshToken) {
@@ -99,17 +99,18 @@ public class AuthService {
         }
         throw new RestException(HttpStatus.FORBIDDEN, "Incorrect refresh token. Re login please");
     }
-@Transactional
+
+    @Transactional
     public UserDto register(RegisterRequestDTO loginRequestDTO) {
 
         String hashPassword = passwordEncoder.encode(loginRequestDTO.password());
         String normalizedEmail = normalizeUserEmail(loginRequestDTO.userEmail());
         Optional<User> foundUser = userRepository.findUserByEmail(normalizedEmail);
         if (foundUser.isPresent()) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "User with email '", loginRequestDTO.userEmail(), "' already exist");
+            throw new RestException(HttpStatus.CONFLICT, "User with email <{0}> already exist", loginRequestDTO.userEmail());
         }
 
-        Role userRole = roleService.findRoleByTitleOrThrow(DEFAULD_USER_ROLE_NAME);
+        Role userRole = roleService.findRoleByTitleOrThrow(DEFAULT_USER_ROLE);
         User user = new User(loginRequestDTO.firstName(),
                 loginRequestDTO.lastName(),
                 normalizedEmail,
@@ -118,11 +119,9 @@ public class AuthService {
                 userRole);
 
         userRepository.save(user);
-        emailService.sendConfirmationEmail(user);
+        String code = confirmationService.generateConfirmationCode(user);
 
+        emailService.sendConfirmationEmail(user, code);
         return userMappingService.mapEntityToDto(user);
-
     }
-
-
 }
