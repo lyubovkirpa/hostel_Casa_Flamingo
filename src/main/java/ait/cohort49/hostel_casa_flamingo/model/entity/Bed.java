@@ -1,16 +1,13 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
-@Table(name = "bed")
+@Table(name = "bed", uniqueConstraints = @UniqueConstraint(columnNames = {"room_id", "bed_number"}))
 public class Bed {
 
     @Id
@@ -20,21 +17,22 @@ public class Bed {
 
     @Column(name = "bed_number")
     @NotBlank(message = "Bed number must not be empty or blank")
-    @Pattern(regexp = "^[^\\s]+$", message = "Bed number must not contain spaces")
+    @Pattern(regexp = "^\\S+$", message = "Bed number must not contain spaces")
+    @Size(min = 1, max = 10, message = "Bed number must be between 1 and 10 characters")
     private String number;
 
     @Column(name = "bed_type")
     @NotBlank(message = "Bed type must not be empty or blank")
-    @Pattern(regexp = "^[^\\s]+$", message = "Bed type must not contain spaces")
+    @Size(min = 1, max = 30, message = "Bed type must be between 1 and 30 characters")
     private String type;
 
-    @Column(name = "bed_price")
+    @Column(name = "bed_price", nullable = false)
     @PositiveOrZero(message = "Price must be non-negative")
-    @NotBlank(message = "Bed number must not be empty or blank")
-    @Digits(integer = 10, fraction = 1, message = "Price must be a valid number with at most one digit after the decimal")
+    @Digits(integer = 10, fraction = 2, message = "Price must be a valid number with at most one digit after the decimal")
     private BigDecimal price;
 
     @ManyToOne
+    @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
     public Room getRoom() {

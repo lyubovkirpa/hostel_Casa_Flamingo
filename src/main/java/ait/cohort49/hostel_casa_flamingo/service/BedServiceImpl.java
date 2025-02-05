@@ -11,6 +11,7 @@ import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 
@@ -33,6 +34,10 @@ public class BedServiceImpl implements BedService {
         Bed bed = bedMappingService.mapDtoToEntity(createBedDto);
         Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
         bed.setRoom(room);
+
+        if (bedRepository.existsByRoomIdAndNumber(room.getId(), bed.getNumber())) {
+            throw new RestException(HttpStatus.CONFLICT, "Bed number already exists in this room");
+        }
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 
