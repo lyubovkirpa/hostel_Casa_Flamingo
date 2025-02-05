@@ -1,20 +1,16 @@
 package ait.cohort49.hostel_casa_flamingo.security.service;
 
 
-import ait.cohort49.hostel_casa_flamingo.model.entity.Role;
-import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.RoleRepository;
 import ait.cohort49.hostel_casa_flamingo.security.AuthInfo;
 import ait.cohort49.hostel_casa_flamingo.security.UserDetailServiceImpl;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import javax.crypto.SecretKey;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,14 +20,12 @@ import java.util.Date;
 @Service
 public class TokenService {
     private final UserDetailServiceImpl userDetailServiceImpl;
-    private RoleRepository roleRepository;
     private SecretKey accessKey;
     private SecretKey refreshKey;
 
     public TokenService(RoleRepository roleRepository,
                         @Value("${key.access}") String accessSecretPhrase,
                         @Value("${key.refresh}") String refreshSecretPhrase, UserDetailServiceImpl userDetailServiceImpl) {
-        this.roleRepository = roleRepository;
         this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessSecretPhrase));
         this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshSecretPhrase));
         this.userDetailServiceImpl = userDetailServiceImpl;

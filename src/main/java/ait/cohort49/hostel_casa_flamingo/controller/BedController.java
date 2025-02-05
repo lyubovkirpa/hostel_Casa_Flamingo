@@ -19,7 +19,6 @@ public class BedController {
         this.bedService = bedService;
     }
 
-
     /**
      * POST /beds
      */

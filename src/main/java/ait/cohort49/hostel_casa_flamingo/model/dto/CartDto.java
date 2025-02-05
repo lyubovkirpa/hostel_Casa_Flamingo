@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import java.util.List;
 import java.util.Objects;
 

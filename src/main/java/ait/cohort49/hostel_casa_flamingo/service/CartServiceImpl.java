@@ -23,13 +23,11 @@ public class CartServiceImpl implements CartService {
     private final BedService bedService;
     private final CartRepository cartRepository;
     private final CartMappingService cartMappingService;
-    private final UserService userService;
 
     public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserService userService) {
         this.bedService = bedService;
         this.cartRepository = cartRepository;
         this.cartMappingService = cartMappingService;
-        this.userService = userService;
     }
 
     @Override

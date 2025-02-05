@@ -1,7 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.math.BigDecimal;
 
 

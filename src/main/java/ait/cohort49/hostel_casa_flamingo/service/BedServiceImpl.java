@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
@@ -8,8 +9,8 @@ import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 
@@ -38,7 +39,7 @@ public class BedServiceImpl implements BedService {
     @Override
     public Bed getBedOrThrow(long id) {
         return bedRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Bed by id: " + id + " not found"));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed by id: " + id + " not found"));
     }
 
     @Override
