@@ -1,6 +1,9 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +14,13 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Room number must not be empty or blank")
+    @Pattern(regexp = "^[^\\s]+$", message = "Bed number must not contain spaces")
     private String number;
+
+    @NotBlank(message = "Room type must not be empty or blank")
+    @Pattern(regexp = "^[^\\s]+$", message = "Bed type must not contain spaces")
     private String type;
 
     @OneToMany (mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,10 +1,18 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+
 import java.util.Objects;
 
 public class CreateOrUpdateRoomDto {
 
+    @NotBlank(message = "Room number must not be empty or blank")
+    @Pattern(regexp = "^\\S+$", message = "Bed number must not contain spaces")
     private final String number;
+
+    @NotBlank(message = "Room type must not be empty or blank")
+    @Pattern(regexp = "^\\S+$", message = "Bed type must not contain spaces")
     private final String type;
 
 

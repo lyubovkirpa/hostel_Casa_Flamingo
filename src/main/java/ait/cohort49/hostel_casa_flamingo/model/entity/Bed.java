@@ -1,7 +1,11 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.PositiveOrZero;
+
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -15,13 +19,19 @@ public class Bed {
     private Long id;
 
     @Column(name = "bed_number")
+    @NotBlank(message = "Bed number must not be empty or blank")
+    @Pattern(regexp = "^[^\\s]+$", message = "Bed number must not contain spaces")
     private String number;
 
     @Column(name = "bed_type")
+    @NotBlank(message = "Bed type must not be empty or blank")
+    @Pattern(regexp = "^[^\\s]+$", message = "Bed type must not contain spaces")
     private String type;
 
     @Column(name = "bed_price")
     @PositiveOrZero(message = "Price must be non-negative")
+    @NotBlank(message = "Bed number must not be empty or blank")
+    @Digits(integer = 10, fraction = 1, message = "Price must be a valid number with at most one digit after the decimal")
     private BigDecimal price;
 
     @ManyToOne
