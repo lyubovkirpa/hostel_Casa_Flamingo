@@ -2,7 +2,6 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
-
 import java.math.BigDecimal;
 import java.util.Objects;
 

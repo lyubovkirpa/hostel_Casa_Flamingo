@@ -2,7 +2,6 @@ package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
-
 import java.time.LocalDate;
 import java.util.Objects;
 

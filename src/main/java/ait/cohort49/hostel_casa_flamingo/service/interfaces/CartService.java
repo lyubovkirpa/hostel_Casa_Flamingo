@@ -3,7 +3,6 @@ package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

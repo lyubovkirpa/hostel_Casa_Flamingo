@@ -2,7 +2,6 @@ package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;

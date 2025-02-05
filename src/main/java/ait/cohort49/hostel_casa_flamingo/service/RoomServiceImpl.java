@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
@@ -9,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.RoomMappingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +69,20 @@ public class RoomServiceImpl implements RoomService {
     public void deleteRoom(Long id) {
         Room room = findByIdOrThrow(id);
 
+        //        TODO
+//        1. Достать все кровати найденной комнаты
+//        2. Проверить есть ли указанные комнаты в Cart, убедиться в том пытается ли
+//        их ктото забронировать
+//        3. Если пытается ктото забронировать -выкинуть ошибку, что ее пытается ктото забронировать
+//        4. Проделать шаг 2,3 и для Booking, n е выкинуть ошибку, в случае если кровати в комнате
+//        забронированы на сегодня или будущее в Booking. Если подтверждение было в прошлом,
+//        удалить все связанные  Booking для каждой кровати в этой комнате, затем удалить саму кровать
+//        написать в CartService метод, который будет проверять наличие кровати в табл Cart
+//        в BookingService должен быть метод(есть ли кровати, которые подтверждены на сегодгня
+//        или будущее-> шаг 4; если метод вернет false -> обращаться к другому методу, который вернет список
+//        бронирований прошлого по выбранной кровати->каждое бронировнаие из списка удалить
+
+
         for (Bed bed : room.getBeds()) {
             cartItemBedRepository.deleteBedById(bed.getId());
         }
@@ -81,7 +97,7 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public Room findByIdOrThrow(Long id) {
         return roomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Room by id: " + id + " not found"));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Room by id: " + id + " not found"));
     }
 
     @Override

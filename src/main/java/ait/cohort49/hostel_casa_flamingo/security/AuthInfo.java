@@ -2,7 +2,6 @@ package ait.cohort49.hostel_casa_flamingo.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-
 import java.util.Collection;
 
 
