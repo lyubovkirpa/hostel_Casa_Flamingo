@@ -41,22 +41,20 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterAfter(tokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/api/v1/users"
+                        ).permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth-test/no-auth").permitAll()
                         .requestMatchers(HttpMethod.POST,
                                 "/auth/login",
                                 "/auth/refresh",
                                 "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/beds").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/beds/{id}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/beds/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/beds/**").permitAll()
-
+                        .requestMatchers(HttpMethod.GET, "/beds/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/rooms/**").permitAll()
-
-                        .requestMatchers(HttpMethod.POST, "/cart/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/cart/**").permitAll()
                         .anyRequest().authenticated()
-
                 )
                 .exceptionHandling(
                         exception -> exception

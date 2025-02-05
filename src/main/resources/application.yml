@@ -10,6 +10,9 @@ spring:
     username: ${DB_USERNAME:my_user}
     password: ${DB_PASS:pos1234}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 4
+      minimum-idle: 1
   application:
     name: Hostel_Casa_Flamingo
 
@@ -43,3 +46,5 @@ server:
 key:
   access: ${KEY_ACCESS:1p+Yz99khoLXqeI28FdElevjMScw0XU1YkNh/WrduLY=}
   refresh: ${KEY_REFRESH:K7iyolWxDkwMNCP/4Kdm5STKRdS7TYl4X3x7ucNYIz8=}
+
+base-url: ${BASE_URL:http://localhost:8080/api}

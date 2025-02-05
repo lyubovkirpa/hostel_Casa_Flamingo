@@ -14,7 +14,7 @@ public class Room {
     private String number;
     private String type;
 
-    @OneToMany (mappedBy = "room")
+    @OneToMany (mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bed> beds = new ArrayList<>();
 
     public String getType() {

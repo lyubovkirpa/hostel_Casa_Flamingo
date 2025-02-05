@@ -1,94 +1,86 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.BookingDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
-import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
-import freemarker.cache.ClassTemplateLoader;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+
+import java.util.List;
 
 
 @Service
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
+    private final MailTemplateService mailTemplateService;
 
-    private final Configuration mailConfig;
+    @Value("${mail.username}")
+    private String fromAddress;
 
-    private final ConfirmationService confirmationService;
+    @Value("${base-url}")
+    private String baseUrl;
 
-    private final static String HOST = "http:://localhost:8080/api";
-
-    public EmailServiceImpl(JavaMailSender mailSender, Configuration mailCongig, ConfirmationService confirmationService) {
+    public EmailServiceImpl(JavaMailSender mailSender, MailTemplateService mailTemplateService) {
         this.mailSender = mailSender;
-        this.mailConfig = mailCongig;
-        this.confirmationService = confirmationService;
-
-        this.mailConfig.setDefaultEncoding("UTF-8");
-        this.mailConfig.setTemplateLoader(new ClassTemplateLoader(this.getClass(), "/mail"));
+        this.mailTemplateService = mailTemplateService;
     }
 
     @Override
-    public void sendConfirmationEmail(User user) {
+    @Async
+    public void sendConfirmationEmail(final User user, String confirmationCode) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new IllegalArgumentException("User email cannot be null or empty");
+        }
+
+        String emailText = generateEmailText(user, confirmationCode);
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            String emailText = generateEmailText(user);
-
-            String fromAddress = System.getenv("MAIL_USERNAME");
             helper.setFrom(fromAddress);
 
-            helper.setTo(user.getEmail());
-
+            helper.setTo(user.getEmail().toLowerCase().trim());
             helper.setSubject("Registration confirmation");
 
             helper.setText(emailText, true);
             mailSender.send(message);
-
-
         } catch (MessagingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Email sending failed. Please try again later.", e);
         }
-
     }
 
-    private String generateEmailText(User user) {
+    @Override
+    public void sendBookingConfirmEmail(List<BookingDto> bookings, User user) {
+        if (user.getEmail() == null || user.getEmail().isBlank()) {
+            throw new IllegalArgumentException("User email cannot be null or empty");
+        }
+
+        //todo удалить когда будут реальные изображения
+        List<BookingDto> list = bookings.stream().peek(b -> b.setImageUrl("https://picsum.photos/400/300")).toList();
+        String emailText = mailTemplateService.generateBookingConfirmationEmail(user, list);
+
         try {
-//            загрузка шаблона письма
-            Template template = mailConfig.getTemplate("confirm_reg_mail.ftlh");
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-//            генерация кода подтверждения
-            String code = confirmationService.generateConfirmationCode(user);
+            helper.setFrom(fromAddress);
+            helper.setTo(user.getEmail().toLowerCase().trim());
+            helper.setSubject("Подтверждение бронирования");
+            helper.setText(emailText, true);
 
-//            сформировать ссылку http:://localhost:8080/api/confirm?code=сгенерированнный код
-
-            String confirmationLink = HOST + "confirm?code=" + code;
-
-//            модель данных для подстановки в шаблон
-            Map<String, Object> modelPattern = new HashMap<>();
-            modelPattern.put("name", user.getFirstName());
-            modelPattern.put("confirmationLink", confirmationLink);
-
-//            педаем модель в шаблон, чтобы получить текст письма
-            return FreeMarkerTemplateUtils.processTemplateIntoString(template, modelPattern);
-
-
-        } catch (IOException | TemplateException e) {
-            throw new RuntimeException(e);
-
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            throw new RuntimeException("Ошибка отправки email", e);
         }
     }
 
-
+    private String generateEmailText(final User user, String confirmationCode) {
+        return mailTemplateService.generateConfirmationEmail(user, confirmationCode, baseUrl);
+    }
 }

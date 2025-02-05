@@ -1,6 +1,8 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.PositiveOrZero;
+
 import java.math.BigDecimal;
 
 
@@ -9,6 +11,7 @@ public class CreateBedDto {
 
     private String number;
     private String type;
+    @PositiveOrZero(message = "Price must be non-negative")
     private BigDecimal price;
     private Long roomId;
 

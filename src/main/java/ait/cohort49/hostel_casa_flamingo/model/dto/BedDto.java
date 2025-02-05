@@ -12,6 +12,8 @@ public class BedDto {
     private String number;
     private String type;
     private BigDecimal price;
+    private Long roomId;
+
 
     public Long getId() {
         return id;
@@ -45,6 +47,14 @@ public class BedDto {
         this.price = price;
     }
 
+    public Long getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -60,7 +70,7 @@ public class BedDto {
 
     @Override
     public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
+        return String.format("BedDto: id - %d, number - %s, type - %s, price - %s, roomId - %d",
+                id, number, type, price, roomId);
     }
 }

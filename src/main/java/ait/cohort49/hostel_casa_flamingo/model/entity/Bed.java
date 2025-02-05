@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 import java.util.Objects;
 
@@ -20,6 +21,7 @@ public class Bed {
     private String type;
 
     @Column(name = "bed_price")
+    @PositiveOrZero(message = "Price must be non-negative")
     private BigDecimal price;
 
     @ManyToOne

@@ -2,6 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,6 @@ public class RoomDto {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     @Override
     public boolean equals(Object o) {
