@@ -10,7 +10,6 @@ public class CartItemBedDto {
     private LocalDate entryDate;
     private LocalDate departureDate;
     private BedDto bed;
-    private Long cartId;
 
     public Long getId() {
         return id;
@@ -44,14 +43,6 @@ public class CartItemBedDto {
         this.bed = bed;
     }
 
-    public Long getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(Long cartId) {
-        this.cartId = cartId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -67,7 +58,7 @@ public class CartItemBedDto {
 
     @Override
     public String toString() {
-        return String.format("CartItemBed: id - %d, entryDate - %s, departureDate - %s, bed - %s, cartId - %s",
-                id, entryDate, departureDate, bed, cartId);
+        return String.format("CartItemBed: id - %d, entryDate - %s, departureDate - %s, bed - %s",
+                id, entryDate, departureDate, bed);
     }
 }
