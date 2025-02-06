@@ -15,5 +15,7 @@ public interface BedRepository extends JpaRepository<Bed, Long> {
             "(SELECT booking.bed.id FROM Booking booking " +
             "WHERE booking.entryDate <= :departureDate AND booking.departureDate >= :entryDate)")
     List<Bed> findAvailableBeds(@Param("entryDate") LocalDate entryDate,
-                                   @Param("departureDate") LocalDate departureDate);
+                                @Param("departureDate") LocalDate departureDate);
+
+    boolean existsByRoomIdAndNumber(Long roomId, String number);
 }

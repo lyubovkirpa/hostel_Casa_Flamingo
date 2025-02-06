@@ -36,6 +36,10 @@ public class BedServiceImpl implements BedService {
         Bed bed = bedMappingService.mapDtoToEntity(createBedDto);
         Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
         bed.setRoom(room);
+
+        if (bedRepository.existsByRoomIdAndNumber(room.getId(), bed.getNumber())) {
+            throw new RestException(HttpStatus.CONFLICT, "Bed number already exists in this room");
+        }
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 
