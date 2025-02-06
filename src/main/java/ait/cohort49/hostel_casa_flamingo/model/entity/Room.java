@@ -1,6 +1,10 @@
 package ait.cohort49.hostel_casa_flamingo.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -11,10 +15,17 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Room number must not be empty or blank")
+    @Pattern(regexp = "^\\S+$", message = "Room number must not contain spaces")
+    @Size(min = 1, max = 10, message = "Room number must be between 1 and 10 characters")
     private String number;
+
+    @NotBlank(message = "Room type must not be empty or blank")
+    @Size(min = 1, max = 30, message = "Room type must be between 1 and 30 characters")
     private String type;
 
-    @OneToMany (mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bed> beds = new ArrayList<>();
 
     public String getType() {
