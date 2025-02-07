@@ -24,3 +24,10 @@ spring:
             trust: smtp.gmail.com
 
 base-url: http://localhost:8080/api
+
+s3:
+  endpoint: https://test.do.com
+  region: fra1
+  accessKey: fake
+  secretKey: fake
+  bucketName: fake
