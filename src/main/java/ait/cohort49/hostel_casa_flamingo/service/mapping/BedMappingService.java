@@ -11,8 +11,10 @@ import org.mapstruct.Mapping;
 public interface BedMappingService {
 
     @Mapping(target = "room.id", source = "roomId")
+    @Mapping(target = "images", ignore = true)
     Bed mapDtoToEntity(CreateBedDto createBedDto);
 
     @Mapping(target = "roomId", source = "room.id")
+    @Mapping(target = "imageUrls", ignore = true)
     BedDto mapEntityToDto(Bed entity);
 }

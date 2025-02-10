@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
 import java.util.Objects;
 
 public class CreateOrUpdateRoomDto {
@@ -17,10 +18,14 @@ public class CreateOrUpdateRoomDto {
     @Size(min = 1, max = 30, message = "Room type must be between 1 and 30 characters")
     private final String type;
 
+    private String description;
 
-    public CreateOrUpdateRoomDto(String number, String type) {
+    private List<String> imageUrls;
+
+    public CreateOrUpdateRoomDto(String number, String type, String description) {
         this.number = number;
         this.type = type;
+        this.description = description;
     }
 
     public String getType() {
@@ -31,23 +36,42 @@ public class CreateOrUpdateRoomDto {
         return number;
     }
 
-    @Override
-    public String toString() {
-        return "CreateOrUpdateRoomDto{" +
-                "number='" + number + '\'' +
-                ", type='" + type + '\'' +
-                '}';
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof CreateOrUpdateRoomDto that)) return false;
-        return Objects.equals(number, that.number) && Objects.equals(type, that.type);
+        if (o == null || getClass() != o.getClass()) return false;
+        CreateOrUpdateRoomDto that = (CreateOrUpdateRoomDto) o;
+        return Objects.equals(number, that.number) && Objects.equals(type, that.type) && Objects.equals(description, that.description) && Objects.equals(imageUrls, that.imageUrls);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(number, type);
+        return Objects.hash(number, type, description, imageUrls);
+    }
+
+    @Override
+    public String toString() {
+        return "CreateOrUpdateRoomDto{" +
+                "number='" + number + '\'' +
+                ", type='" + type + '\'' +
+                ", description='" + description + '\'' +
+                ", imageUrls=" + imageUrls +
+                '}';
     }
 }

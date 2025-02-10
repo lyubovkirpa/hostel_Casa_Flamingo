@@ -28,6 +28,12 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Bed> beds = new ArrayList<>();
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
+
+    @Column(name = "description")
+    private String description;
+
     public String getType() {
         return type;
     }
@@ -60,6 +66,22 @@ public class Room {
         this.id = id;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,6 +100,9 @@ public class Room {
                 "id=" + id +
                 ", number='" + number + '\'' +
                 ", type='" + type + '\'' +
+                ", beds=" + beds +
+                ", images=" + images +
+                ", description='" + description + '\'' +
                 '}';
     }
 }
