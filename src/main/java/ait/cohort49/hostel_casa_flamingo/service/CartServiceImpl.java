@@ -110,12 +110,6 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public boolean isBedInCart(Long bedId) {
-        return cartItemBedRepository.existsByBedId(bedId);
-    }
-
-
-    @Override
     public BigDecimal getTotalPrice(User authUser) {
 
         Cart userCart = getCartEntity(authUser);
