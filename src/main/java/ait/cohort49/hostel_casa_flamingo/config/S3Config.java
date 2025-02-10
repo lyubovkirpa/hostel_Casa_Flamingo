@@ -3,11 +3,14 @@ package ait.cohort49.hostel_casa_flamingo.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+
 import java.net.URI;
 
 
@@ -26,13 +29,28 @@ public class S3Config {
     @Value("${s3.secretKey}")
     private String secretKey;
 
+    /**
+     * Создание синхронного клиента S3 для работы с S3Presigner
+     */
     @Bean
-    public S3AsyncClient s3AsyncClient() {
-        return S3AsyncClient.builder()
+    @Primary
+    public S3Client s3Client() {
+        return S3Client.builder()
                 .endpointOverride(URI.create(s3Endpoint))
                 .region(Region.of(s3Region))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .serviceConfiguration(S3Configuration.builder().pathStyleAccessEnabled(true).build())
                 .build();
     }
+
+    @Bean
+    public S3Presigner s3Presigner() {
+        Region awsRegion = Region.of(s3Region);
+        return S3Presigner.builder()
+                .region(awsRegion)
+                .credentialsProvider(StaticCredentialsProvider.create(
+                        AwsBasicCredentials.create(accessKey, secretKey)))
+                .build();
+    }
 }
+

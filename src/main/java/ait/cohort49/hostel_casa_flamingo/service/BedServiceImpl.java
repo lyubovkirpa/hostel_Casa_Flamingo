@@ -4,15 +4,18 @@ import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,13 +25,16 @@ public class BedServiceImpl implements BedService {
     private final BedRepository bedRepository;
     private final BedMappingService bedMappingService;
     private final RoomService roomService;
+    private final S3StorageService s3StorageService;
 
     public BedServiceImpl(BedRepository bedRepository,
                           BedMappingService bedMappingService,
-                          RoomService roomService) {
+                          RoomService roomService,
+                          S3StorageService s3StorageService) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
         this.roomService = roomService;
+        this.s3StorageService = s3StorageService;
     }
 
     @Override
@@ -52,15 +58,37 @@ public class BedServiceImpl implements BedService {
     @Override
     public BedDto getBedById(Long id) {
         Bed bed = getBedOrThrow(id);
-        return bedMappingService.mapEntityToDto(bed);
+
+        List<Image> bedImages = (bed.getImages() != null) ? bed.getImages() : new ArrayList<>();
+
+        List<String> bedImagesUrls = !bedImages.isEmpty()
+                ? generateImageUrls(bedImages)
+                : new ArrayList<>();  // Пустой список, если нет изображений
+
+        BedDto bedDto = bedMappingService.mapEntityToDto(bed);
+        bedDto.setImageUrls(bedImagesUrls);
+        return bedDto;
+    }
+
+    private List<String> generateImageUrls(List<Image> bedImages) {
+        return bedImages.stream()
+                .map(image -> s3StorageService.generatePresignedUrl(image.getS3Path()).toString())
+//                .map(uri -> uri.toString())
+                .toList();
     }
 
     @Override
     public List<BedDto> getAllBeds() {
-        return bedRepository.findAll()
-                .stream()
-                .map(bedMappingService::mapEntityToDto)
-                .toList();
+        List<Bed> beds = bedRepository.findAll();
+        List<BedDto> bedDtos = new ArrayList<>();
+        for (Bed bed : beds) {
+            List<Image> bedImages = bed.getImages();
+            List<String> bedImagesUrls = generateImageUrls(bedImages);
+            BedDto bedDto = bedMappingService.mapEntityToDto(bed);
+            bedDto.setImageUrls(bedImagesUrls);
+            bedDtos.add(bedDto);
+        }
+        return bedDtos;
     }
 
     @Override
@@ -71,9 +99,15 @@ public class BedServiceImpl implements BedService {
 
     @Override
     public List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate) {
-        return bedRepository.findAvailableBeds(entryDate, departureDate)
-                .stream()
-                .map(bedMappingService::mapEntityToDto)
-                .toList();
+        List<Bed> availableBeds = bedRepository.findAvailableBeds(entryDate, departureDate);
+        List<BedDto> availableBedDtos = new ArrayList<>();
+        for (Bed bed : availableBeds) {
+            List<Image> bedImages = bed.getImages();
+            List<String> bedImagesUrls = generateImageUrls(bedImages);
+            BedDto bedDto = bedMappingService.mapEntityToDto(bed);
+            bedDto.setImageUrls(bedImagesUrls);
+        }
+        return availableBedDtos;
     }
 }
+

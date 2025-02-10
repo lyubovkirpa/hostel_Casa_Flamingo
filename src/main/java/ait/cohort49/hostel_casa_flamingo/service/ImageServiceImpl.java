@@ -1,0 +1,121 @@
+package ait.cohort49.hostel_casa_flamingo.service;
+
+import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
+import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.ImageRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.ImageService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.net.URL;
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class ImageServiceImpl implements ImageService {
+
+    private final ImageRepository imageRepository;
+    private final S3StorageService s3StorageService;
+    private final BedRepository bedRepository;
+    private final RoomRepository roomRepository;
+
+    @Value("${s3.bucketName}")
+    private String bucketName;
+
+    public ImageServiceImpl(ImageRepository imageRepository, S3StorageService s3StorageService, BedRepository bedRepository, RoomRepository roomRepository) {
+        this.imageRepository = imageRepository;
+        this.s3StorageService = s3StorageService;
+        this.bedRepository = bedRepository;
+        this.roomRepository = roomRepository;
+    }
+
+
+    @Override
+    public String uploadImageForBed(MultipartFile file, Bed bed) {
+
+        try {
+            String s3Path = "beds/" + bed.getId() + "/images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            s3StorageService.uploadFile(s3Path, file);
+
+            Image image = new Image();
+            image.setS3Path(s3Path);
+            image.setFileOriginName(file.getOriginalFilename());
+            image.setS3BucketName(bucketName);
+            image.setBed(bed);
+            image.setRoom(null);
+
+            imageRepository.save(image);
+
+            return s3StorageService.generatePresignedUrl(s3Path).toString();
+
+        } catch (Exception e) {
+            throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while uploading image", e);
+        }
+    }
+
+    @Override
+    public String uploadImageForRoom(MultipartFile file, Room room) {
+        try {
+            String s3Path = "rooms/" + room.getId() + "/images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            s3StorageService.uploadFile(s3Path, file);
+
+            Image image = new Image();
+            image.setS3Path(s3Path);
+            image.setFileOriginName(file.getOriginalFilename());
+            image.setS3BucketName(bucketName);
+            image.setRoom(room);
+            image.setBed(null);
+
+            imageRepository.save(image);
+
+            return s3StorageService.generatePresignedUrl(s3Path).toString();
+
+        } catch (Exception e) {
+            throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while uploading image for room", e);
+        }
+    }
+
+    @Override
+    public List<Image> getImagesByBed(Long bedId) {
+        Bed bed = bedRepository.findById(bedId)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed by id: " + bedId + " not found"));
+
+        return imageRepository.findAllByBed(bed);
+    }
+
+    @Override
+    public List<Image> getImagesByRoom(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Room by id: " + roomId + " not found"));
+
+        return imageRepository.findAllByRoom(room);
+    }
+
+    @Override
+    public void deleteImage(Long id) {
+        // Находим изображение по ID
+        Image image = imageRepository.findById(id)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Image by id: " + id + " not found"));
+
+        s3StorageService.deleteFile(image.getS3Path());
+
+        imageRepository.delete(image);
+    }
+
+
+    @Override
+    public URL getPresignedUrl(Long imageId) {
+
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Image by id: " + imageId + " not found"));
+
+        return s3StorageService.generatePresignedUrl(image.getS3Path());
+    }
+}
