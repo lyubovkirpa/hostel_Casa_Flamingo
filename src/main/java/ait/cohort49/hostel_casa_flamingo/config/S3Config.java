@@ -13,7 +13,6 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.net.URI;
 
-
 @Configuration
 public class S3Config {
 
@@ -36,6 +35,7 @@ public class S3Config {
     @Primary
     public S3Client s3Client() {
         return S3Client.builder()
+
                 .endpointOverride(URI.create(s3Endpoint))
                 .region(Region.of(s3Region))
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
@@ -53,4 +53,3 @@ public class S3Config {
                 .build();
     }
 }
-

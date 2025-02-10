@@ -110,4 +110,3 @@ public class BedServiceImpl implements BedService {
         return availableBedDtos;
     }
 }
-
