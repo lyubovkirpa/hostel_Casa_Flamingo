@@ -31,7 +31,8 @@ public class BookingServiceImpl implements BookingService {
     public BookingServiceImpl(BookingRepository bookingRepository,
                               CartService cartService,
                               BookingMappingService bookingMappingService,
-                              BookingEmailService bookingEmailService, BedServiceImpl bedServiceImpl) {
+                              BookingEmailService bookingEmailService,
+                              BedServiceImpl bedServiceImpl) {
         this.bookingRepository = bookingRepository;
         this.cartService = cartService;
         this.bookingMappingService = bookingMappingService;
@@ -44,8 +45,8 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> createBookingFromCart(User authUser) {
 
         Cart cart = cartService.getCartEntity(authUser);
-        List<CartItemBed> cartItemBeds = cart.getCartItemBeds();
 
+        List<CartItemBed> cartItemBeds = cart.getCartItemBeds();
         if (cartItemBeds == null || cartItemBeds.isEmpty()) {
             return new ArrayList<>();
         }
@@ -53,18 +54,16 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookingList = new ArrayList<>();
         for (CartItemBed cartItemBed : cartItemBeds) {
             Long bedId = cartItemBed.getBed().getId();
-            if (cartService.isBedInCart(bedId)){
-                throw new RestException(HttpStatus.NOT_FOUND, "Кровать уже добавлена " +
-                        "в корзину другим пользователем");
-            }
+            LocalDate entryDate = cartItemBed.getEntryDate();
+            LocalDate departureDate = cartItemBed.getDepartureDate();
 
-            if (hasActiveBookings(bedId)){
-                throw new RestException(HttpStatus.NOT_FOUND, "Кровать уже забронирована");
+            if (bookingRepository.isBedBooked(bedId, entryDate, departureDate)) {
+                throw new RestException("Кровать " + bedId + " уже забронирована на указанные даты");
             }
 
             Booking booking = new Booking(
-                    cartItemBed.getEntryDate(),
-                    cartItemBed.getDepartureDate(),
+                    entryDate,
+                    departureDate,
                     cartService.getTotalPrice(authUser),
                     authUser,
                     cartItemBed.getBed()

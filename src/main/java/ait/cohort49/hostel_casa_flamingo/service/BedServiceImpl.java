@@ -11,6 +11,8 @@ import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -21,8 +23,9 @@ public class BedServiceImpl implements BedService {
     private final BedMappingService bedMappingService;
     private final RoomService roomService;
 
-
-    public BedServiceImpl(BedRepository bedRepository, BedMappingService bedMappingService, RoomService roomService) {
+    public BedServiceImpl(BedRepository bedRepository,
+                          BedMappingService bedMappingService,
+                          RoomService roomService) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
         this.roomService = roomService;
@@ -33,6 +36,10 @@ public class BedServiceImpl implements BedService {
         Bed bed = bedMappingService.mapDtoToEntity(createBedDto);
         Room room = roomService.findByIdOrThrow(createBedDto.getRoomId());
         bed.setRoom(room);
+
+        if (bedRepository.existsByRoomIdAndNumber(room.getId(), bed.getNumber())) {
+            throw new RestException(HttpStatus.CONFLICT, "Bed number already exists in this room");
+        }
         return bedMappingService.mapEntityToDto(bedRepository.save(bed));
     }
 
@@ -60,5 +67,13 @@ public class BedServiceImpl implements BedService {
     public void deleteBedById(Long id) {
         getBedOrThrow(id);
         bedRepository.deleteById(id);
+    }
+
+    @Override
+    public List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate) {
+        return bedRepository.findAvailableBeds(entryDate, departureDate)
+                .stream()
+                .map(bedMappingService::mapEntityToDto)
+                .toList();
     }
 }
