@@ -10,5 +10,6 @@ public interface CartItemBedRepository extends JpaRepository<CartItemBed, Long> 
     @Modifying
     @Transactional
     @Query("DELETE FROM CartItemBed c WHERE c.bed.id = :bedId")
-    void deleteBedById(Long bedId);
+    boolean deleteBedById(Long bedId);
+
 }

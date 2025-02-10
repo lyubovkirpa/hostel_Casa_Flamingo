@@ -5,7 +5,6 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,4 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                         @Param("entryDate") LocalDate entryDate,
                         @Param("departureDate") LocalDate departureDate);
 
+    boolean existsByIdAndDepartureDateAfter(Long bedId, LocalDate date);
+
+    List<Booking> findBedByIdAndDepartureDateBefore(Long bedId, LocalDate date);
 }
