@@ -16,6 +16,8 @@ public interface CartService {
 
     void removeBedFromCart(User authUser, Long bedId);
 
+    boolean isBedInCart(Long bedId);
+
     BigDecimal getTotalPrice(User authUser);
 
     void clearUserCart(User authUser);

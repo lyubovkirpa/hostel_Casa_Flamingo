@@ -13,7 +13,6 @@ import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -109,6 +108,12 @@ public class CartServiceImpl implements CartService {
         itemBed.ifPresent(cartItemBeds::remove);
         cartRepository.save(userCart);
     }
+
+    @Override
+    public boolean isBedInCart(Long bedId) {
+        return cartItemBedRepository.existsByBedId(bedId);
+    }
+
 
     @Override
     public BigDecimal getTotalPrice(User authUser) {
