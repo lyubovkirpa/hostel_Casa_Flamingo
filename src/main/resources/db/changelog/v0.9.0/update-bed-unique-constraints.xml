@@ -9,5 +9,11 @@
         <dropUniqueConstraint tableName="bed" constraintName="bed_bed_number_key"/>
     </changeSet>
 
+    <changeSet id="add-new-unique-constraint" author="LiubovK">
+        <addUniqueConstraint
+                tableName="bed"
+                constraintName="unique_room_bed_number"
+                columnNames="room_id, bed_number"/>
+    </changeSet>
 
 </databaseChangeLog>
