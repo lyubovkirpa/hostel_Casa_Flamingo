@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -58,38 +57,16 @@ public class BedServiceImpl implements BedService {
     @Override
     public BedDto getBedById(Long id) {
         Bed bed = getBedOrThrow(id);
-
-        List<Image> bedImages = (bed.getImages() != null) ? bed.getImages() : new ArrayList<>();
-
-        List<String> bedImagesUrls = !bedImages.isEmpty()
-                ? generateImageUrls(bedImages)
-                : new ArrayList<>();  // Пустой список, если нет изображений
-
-        BedDto bedDto = bedMappingService.mapEntityToDto(bed);
-        bedDto.setImageUrls(bedImagesUrls);
-        return bedDto;
-    }
-
-    private List<String> generateImageUrls(List<Image> bedImages) {
-        return bedImages.stream()
-                .map(image -> s3StorageService.generatePresignedUrl(image.getS3Path()).toString())
-//                .map(uri -> uri.toString())
-                .toList();
+        return mapBedToDtoWithImages(bed);
     }
 
     @Override
     public List<BedDto> getAllBeds() {
-        List<Bed> beds = bedRepository.findAll();
-        List<BedDto> bedDtos = new ArrayList<>();
-        for (Bed bed : beds) {
-            List<Image> bedImages = bed.getImages();
-            List<String> bedImagesUrls = generateImageUrls(bedImages);
-            BedDto bedDto = bedMappingService.mapEntityToDto(bed);
-            bedDto.setImageUrls(bedImagesUrls);
-            bedDtos.add(bedDto);
-        }
-        return bedDtos;
+        return bedRepository.findAll().stream()
+                .map(this::mapBedToDtoWithImages)
+                .toList();
     }
+
 
     @Override
     public void deleteBedById(Long id) {
@@ -99,14 +76,16 @@ public class BedServiceImpl implements BedService {
 
     @Override
     public List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate) {
-        List<Bed> availableBeds = bedRepository.findAvailableBeds(entryDate, departureDate);
-        List<BedDto> availableBedDtos = new ArrayList<>();
-        for (Bed bed : availableBeds) {
-            List<Image> bedImages = bed.getImages();
-            List<String> bedImagesUrls = generateImageUrls(bedImages);
-            BedDto bedDto = bedMappingService.mapEntityToDto(bed);
-            bedDto.setImageUrls(bedImagesUrls);
-        }
-        return availableBedDtos;
+        return bedRepository.findAvailableBeds(entryDate, departureDate).stream()
+                .map(this::mapBedToDtoWithImages)
+                .toList();
+    }
+
+    private BedDto mapBedToDtoWithImages(Bed bed) {
+        List<Image> bedImages = bed.getImages();
+        List<String> bedImagesUrls = s3StorageService.getImageUrl(bedImages);
+        BedDto bedDto = bedMappingService.mapEntityToDto(bed);
+        bedDto.setImageUrls(bedImagesUrls);
+        return bedDto;
     }
 }

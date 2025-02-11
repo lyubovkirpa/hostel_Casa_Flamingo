@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,22 +38,14 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String uploadImageForBed(MultipartFile file, Bed bed) {
-
+        String fileOriginalFilename = file.getOriginalFilename();
         try {
-            String s3Path = "beds/" + bed.getId() + "/images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String s3Path = "beds/" + bed.getId() + "/images/" + UUID.randomUUID() + "_" + fileOriginalFilename;
             s3StorageService.uploadFile(s3Path, file);
 
-            Image image = new Image();
-            image.setS3Path(s3Path);
-            image.setFileOriginName(file.getOriginalFilename());
-            image.setS3BucketName(bucketName);
-            image.setBed(bed);
-            image.setRoom(null);
-
+            Image image = new Image(s3Path, fileOriginalFilename, bucketName, bed);
             imageRepository.save(image);
-
-            return s3StorageService.generatePresignedUrl(s3Path).toString();
-
+            return s3StorageService.getImageUrl(s3Path);
         } catch (Exception e) {
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while uploading image", e);
         }
@@ -62,21 +53,14 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String uploadImageForRoom(MultipartFile file, Room room) {
+        String fileOriginalFilename = file.getOriginalFilename();
         try {
-            String s3Path = "rooms/" + room.getId() + "/images/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String s3Path = "rooms/" + room.getId() + "/images/" + UUID.randomUUID() + "_" + fileOriginalFilename;
             s3StorageService.uploadFile(s3Path, file);
 
-            Image image = new Image();
-            image.setS3Path(s3Path);
-            image.setFileOriginName(file.getOriginalFilename());
-            image.setS3BucketName(bucketName);
-            image.setRoom(room);
-            image.setBed(null);
-
+            Image image = new Image(s3Path, fileOriginalFilename, bucketName, room);
             imageRepository.save(image);
-
-            return s3StorageService.generatePresignedUrl(s3Path).toString();
-
+            return s3StorageService.getImageUrl(s3Path);
         } catch (Exception e) {
             throw new RestException(HttpStatus.INTERNAL_SERVER_ERROR, "Error while uploading image for room", e);
         }
@@ -111,11 +95,11 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public URL getPresignedUrl(Long imageId) {
+    public String getImageUrl(Long imageId) {
 
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Image by id: " + imageId + " not found"));
 
-        return s3StorageService.generatePresignedUrl(image.getS3Path());
+        return s3StorageService.getImageUrl(image.getS3Path());
     }
 }
