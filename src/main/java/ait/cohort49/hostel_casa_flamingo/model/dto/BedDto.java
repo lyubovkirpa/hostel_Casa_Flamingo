@@ -1,7 +1,9 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -13,7 +15,8 @@ public class BedDto {
     private String type;
     private BigDecimal price;
     private Long roomId;
-
+    private List<String> imageUrls;
+    public String description;
 
     public Long getId() {
         return id;
@@ -55,6 +58,22 @@ public class BedDto {
         this.roomId = roomId;
     }
 
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -70,7 +89,7 @@ public class BedDto {
 
     @Override
     public String toString() {
-        return String.format("BedDto: id - %d, number - %s, type - %s, price - %s, roomId - %d",
-                id, number, type, price, roomId);
+        return String.format("BedDto: id - %d, number - %s, type - %s, price - %s, roomId - %d, imageUrls - %s, description - %s",
+                id, number, type, price, roomId, imageUrls, description);
     }
 }

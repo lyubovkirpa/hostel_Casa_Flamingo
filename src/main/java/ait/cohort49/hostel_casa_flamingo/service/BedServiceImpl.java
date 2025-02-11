@@ -4,10 +4,12 @@ import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,13 +24,16 @@ public class BedServiceImpl implements BedService {
     private final BedRepository bedRepository;
     private final BedMappingService bedMappingService;
     private final RoomService roomService;
+    private final S3StorageService s3StorageService;
 
     public BedServiceImpl(BedRepository bedRepository,
                           BedMappingService bedMappingService,
-                          RoomService roomService) {
+                          RoomService roomService,
+                          S3StorageService s3StorageService) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
         this.roomService = roomService;
+        this.s3StorageService = s3StorageService;
     }
 
     @Override
@@ -52,16 +57,16 @@ public class BedServiceImpl implements BedService {
     @Override
     public BedDto getBedById(Long id) {
         Bed bed = getBedOrThrow(id);
-        return bedMappingService.mapEntityToDto(bed);
+        return mapBedToDtoWithImages(bed);
     }
 
     @Override
     public List<BedDto> getAllBeds() {
-        return bedRepository.findAll()
-                .stream()
-                .map(bedMappingService::mapEntityToDto)
+        return bedRepository.findAll().stream()
+                .map(this::mapBedToDtoWithImages)
                 .toList();
     }
+
 
     @Override
     public void deleteBedById(Long id) {
@@ -71,9 +76,16 @@ public class BedServiceImpl implements BedService {
 
     @Override
     public List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate) {
-        return bedRepository.findAvailableBeds(entryDate, departureDate)
-                .stream()
-                .map(bedMappingService::mapEntityToDto)
+        return bedRepository.findAvailableBeds(entryDate, departureDate).stream()
+                .map(this::mapBedToDtoWithImages)
                 .toList();
+    }
+
+    private BedDto mapBedToDtoWithImages(Bed bed) {
+        List<Image> bedImages = bed.getImages();
+        List<String> bedImagesUrls = s3StorageService.getImageUrl(bedImages);
+        BedDto bedDto = bedMappingService.mapEntityToDto(bed);
+        bedDto.setImageUrls(bedImagesUrls);
+        return bedDto;
     }
 }
