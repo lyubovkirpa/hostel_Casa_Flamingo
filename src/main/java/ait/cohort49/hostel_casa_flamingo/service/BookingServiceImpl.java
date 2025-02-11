@@ -10,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.repository.BookingRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BookingService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BookingMappingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +25,19 @@ public class BookingServiceImpl implements BookingService {
     private final CartService cartService;
     private final BookingMappingService bookingMappingService;
     private final BookingEmailService bookingEmailService;
+    private final BedServiceImpl bedServiceImpl;
 
 
     public BookingServiceImpl(BookingRepository bookingRepository,
                               CartService cartService,
                               BookingMappingService bookingMappingService,
-                              BookingEmailService bookingEmailService) {
+                              BookingEmailService bookingEmailService,
+                              BedServiceImpl bedServiceImpl) {
         this.bookingRepository = bookingRepository;
         this.cartService = cartService;
         this.bookingMappingService = bookingMappingService;
         this.bookingEmailService = bookingEmailService;
+        this.bedServiceImpl = bedServiceImpl;
     }
 
     @Override
@@ -86,4 +90,34 @@ public class BookingServiceImpl implements BookingService {
                 .map(bookingMappingService::mapEntityToDto)
                 .toList();
     }
+
+    @Override
+    public boolean hasActiveBookings(Long bedId){
+        return bookingRepository.existsByIdAndDepartureDateAfter(bedId, LocalDate.now());
+    }
+
+    @Override
+    @Transactional
+    public List<Booking> getPastBookings(Long bedId) {
+        return bookingRepository.findBedByIdAndDepartureDateBefore(bedId, LocalDate.now());
+    }
+
+    @Override
+    @Transactional
+    public void deletePastBookings(Long bedId) {
+        List<Booking> pastBookings = getPastBookings(bedId);
+        bookingRepository.deleteAll(pastBookings);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBedWithoutFutureBookings(Long bedId) {
+        if (!hasActiveBookings(bedId)) {
+            deletePastBookings(bedId);
+            bedServiceImpl.deleteBedById(bedId);
+        } else {
+            throw new RestException(HttpStatus.NOT_FOUND, "Кровать забронирована на сегодня или в будущем");
+        }
+    }
 }
+

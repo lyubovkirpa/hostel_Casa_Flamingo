@@ -106,7 +106,7 @@ public class AuthService {
         String normalizedEmail = normalizeUserEmail(loginRequestDTO.userEmail());
         Optional<User> foundUser = userRepository.findUserByEmail(normalizedEmail);
         if (foundUser.isPresent()) {
-            throw new RestException(HttpStatus.CONFLICT, "User with email <{0}> already exist", loginRequestDTO.userEmail());
+            throw new RestException(HttpStatus.CONFLICT, "User with email {0} already exist", loginRequestDTO.userEmail());
         }
 
         Role userRole = roleService.findRoleByTitleOrThrow(DEFAULT_USER_ROLE);

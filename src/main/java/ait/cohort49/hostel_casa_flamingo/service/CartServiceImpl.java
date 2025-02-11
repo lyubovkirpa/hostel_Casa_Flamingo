@@ -1,7 +1,9 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CartDto;
+import ait.cohort49.hostel_casa_flamingo.model.dto.CartItemBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,13 +48,36 @@ public class CartServiceImpl implements CartService {
         long countBeds = userCart.getCartItemBeds().size();
         cartDto.setCountBeds(countBeds);
 
-        BigDecimal totalPriceBeds = userCart.getCartItemBeds()
-                .stream()
-                .map(cartItemBed -> cartItemBed.getBed().getPrice())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        cartDto.setTotalPriceBeds((totalPriceBeds));
+        BigDecimal totalPriceBeds = BigDecimal.ZERO;
 
+        for (CartItemBed cartItemBed : userCart.getCartItemBeds()) {
+            BigDecimal totalCostForBed = calculateTotalCostForBed(cartItemBed);
+
+            BedDto bedDto = new BedDto();
+            bedDto.setId(cartItemBed.getBed().getId());
+            bedDto.setNumber(cartItemBed.getBed().getNumber());
+            bedDto.setType(cartItemBed.getBed().getType());
+            bedDto.setRoomId(cartItemBed.getBed().getRoom().getId());
+            // Устанавливаем пересчитанную цену
+            bedDto.setPrice(totalCostForBed);
+            // добавляем BedDto в CartItemBedDto
+            CartItemBedDto cartItemBedDto = new CartItemBedDto();
+            cartItemBedDto.setId(cartItemBed.getId());
+            cartItemBedDto.setEntryDate(cartItemBed.getEntryDate());
+            cartItemBedDto.setDepartureDate(cartItemBed.getDepartureDate());
+            cartItemBedDto.setBed(bedDto);
+
+            cartDto.getBeds().add(cartItemBedDto);
+            totalPriceBeds = totalPriceBeds.add(totalCostForBed);
+        }
+        cartDto.setTotalPriceBeds(totalPriceBeds);
         return cartDto;
+    }
+
+    private BigDecimal calculateTotalCostForBed(CartItemBed cartItemBed) {
+        BigDecimal bedPrice = cartItemBed.getBed().getPrice();
+        long daysBetween = ChronoUnit.DAYS.between(cartItemBed.getEntryDate(), cartItemBed.getDepartureDate());
+        return bedPrice.multiply(BigDecimal.valueOf(daysBetween));
     }
 
     @Override
@@ -112,13 +138,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public BigDecimal getTotalPrice(User authUser) {
-
         Cart userCart = getCartEntity(authUser);
 
         return userCart.getCartItemBeds()
                 .stream()
-                .map(CartItemBed::getBed)
-                .map(Bed::getPrice)
+                .map(this::calculateTotalCostForBed)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
