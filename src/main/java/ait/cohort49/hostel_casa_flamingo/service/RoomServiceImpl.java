@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateOrUpdateRoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.RoomDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
@@ -9,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.ImageService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.RoomMappingService;
@@ -27,17 +29,20 @@ public class RoomServiceImpl implements RoomService {
     private final CartItemBedRepository cartItemBedRepository;
     private final BedRepository bedRepository;
     private final S3StorageService s3StorageService;
+    private final ImageService imageService;
 
     public RoomServiceImpl(RoomRepository roomRepository,
                            RoomMappingService roomMappingService,
                            CartItemBedRepository cartItemBedRepository,
                            BedRepository bedRepository,
-                           S3StorageService s3StorageService) {
+                           S3StorageService s3StorageService,
+                           ImageService imageService) {
         this.roomRepository = roomRepository;
         this.roomMappingService = roomMappingService;
         this.cartItemBedRepository = cartItemBedRepository;
         this.bedRepository = bedRepository;
         this.s3StorageService = s3StorageService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -66,6 +71,12 @@ public class RoomServiceImpl implements RoomService {
         RoomDto roomDto = roomMappingService.mapEntityToDto(room);
         roomDto.setImageUrls(roomImagesUrls);
         roomDto.setPrice(priceRoom);
+
+        for (BedDto bedDto : roomDto.getBeds()) {
+            List<Image> bedImages = imageService.getImagesByBed(bedDto.getId());
+            List<String> imagesByBed = s3StorageService.getImageUrl(bedImages);
+            bedDto.setImageUrls(imagesByBed);
+        }
         return roomDto;
     }
 
