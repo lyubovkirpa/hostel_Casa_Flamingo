@@ -6,10 +6,26 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
 
     <changeSet id="remove-existing-unique-bed-number" author="LiubovK">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="1">
+                SELECT COUNT(*) FROM information_schema.table_constraints
+                WHERE table_name = 'bed' AND constraint_name = 'bed_bed_number_key'
+            </sqlCheck>
+        </preConditions>
         <dropUniqueConstraint tableName="bed" constraintName="bed_bed_number_key"/>
     </changeSet>
 
+
     <changeSet id="add-new-unique-constraint" author="LiubovK">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sqlCheck expectedResult="1">
+                    SELECT COUNT(*) FROM information_schema.table_constraints
+                    WHERE table_name = 'bed' AND constraint_name = 'unique_room_bed_number'
+                </sqlCheck>
+            </not>
+        </preConditions>
+
         <addUniqueConstraint
                 tableName="bed"
                 constraintName="unique_room_bed_number"
