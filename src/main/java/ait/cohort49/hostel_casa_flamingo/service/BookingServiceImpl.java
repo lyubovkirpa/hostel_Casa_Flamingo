@@ -58,7 +58,7 @@ public class BookingServiceImpl implements BookingService {
             LocalDate departureDate = cartItemBed.getDepartureDate();
 
             if (bookingRepository.isBedBooked(bedId, entryDate, departureDate)) {
-                throw new RestException("Кровать " + bedId + " уже забронирована на указанные даты");
+                throw new RestException(HttpStatus.NOT_FOUND, "The bed " + bedId + " for the dates from " + entryDate + " to " + departureDate + " is already booked.");
             }
 
             Booking booking = new Booking(
@@ -116,7 +116,7 @@ public class BookingServiceImpl implements BookingService {
             deletePastBookings(bedId);
             bedServiceImpl.deleteBedById(bedId);
         } else {
-            throw new RestException(HttpStatus.NOT_FOUND, "Кровать забронирована на сегодня или в будущем");
+            throw new RestException(HttpStatus.NOT_FOUND, "The bed is booked for today or in the future");
         }
     }
 }

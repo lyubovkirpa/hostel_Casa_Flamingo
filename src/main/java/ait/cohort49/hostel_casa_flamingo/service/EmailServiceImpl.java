@@ -71,12 +71,12 @@ public class EmailServiceImpl implements EmailService {
 
             helper.setFrom(fromAddress);
             helper.setTo(user.getEmail().toLowerCase().trim());
-            helper.setSubject("Подтверждение бронирования");
+            helper.setSubject("Confirmation of booking");
             helper.setText(emailText, true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
-            throw new RuntimeException("Ошибка отправки email", e);
+            throw new RuntimeException("Error sending e-mail", e);
         }
     }
 
