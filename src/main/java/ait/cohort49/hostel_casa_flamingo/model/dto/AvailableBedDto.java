@@ -1,5 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -70,10 +72,12 @@ public class AvailableBedDto {
         this.description = description;
     }
 
+    @JsonProperty("isAvailable")
     public boolean isAvailable() {
         return isAvailable;
     }
 
+    @JsonProperty("isAvailable")
     public void setAvailable(boolean available) {
         isAvailable = available;
     }
