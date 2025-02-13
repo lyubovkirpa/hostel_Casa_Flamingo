@@ -7,11 +7,11 @@
 </head>
 <body>
 
-<h1 style="color: green">Подтверждение регистрации</h1>
-<h2>Добрый день, ${name}!</h2>
-<p>Для подтверждения регистрации пройдите по следующей ссылке:</p>
-<a href="${confirmationLink}">Подтвердить регистрацию</a>
-<p>Спасибо, что выбрали наш сервис!</p>
+<h1 style="color: green">Registration confirmation</h1>
+<h2>Hello, ${name}!</h2>
+<p>To confirm your registration, please click on the following link:</p>
+<a href="${confirmationLink}">Confirm</a>
+<p>Thank you for choosing our service!</p>
 
 </body>
 

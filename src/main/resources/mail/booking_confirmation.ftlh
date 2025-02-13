@@ -1,9 +1,9 @@
 <#-- booking_confirmation.ftlh -->
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Подтверждение бронирования</title>
+    <title>Booking confirmation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -59,28 +59,30 @@
 </head>
 <body>
 <div class="container">
-    <h2>Здравствуйте, ${user.firstName}!</h2>
-    <p>Ваши бронирования в нашем хостеле подтверждены.</p>
+    <h2>Hello, ${user.firstName}!</h2>
+    <p>Thanks ${user.firstName}! Your booking in our Hostel Casa Flamingo is confirmed. </p>
 
     <div class="details">
         <#list bookings as booking>
             <div class="booking">
-                <img src="${booking.imageUrl}" alt="Изображение бронирования">
+                <img src="${booking.imageUrl}" alt="Booking image">
                 <div>
-                    <p><strong>Номер бронирования:</strong> ${booking.bookingNumber}</p>
-                    <p><strong>Дата заезда:</strong> ${booking.entryDate}</p>
-                    <p><strong>Дата выезда:</strong> ${booking.departureDate}</p>
-                    <p><strong>Цена:</strong> ${booking.totalPrice} €</p>
+                    <p><strong>Booking number:</strong> ${booking.bookingNumber}</p>
+                    <p><strong>Check-In:</strong> ${booking.entryDate}</p>
+                    <p><strong>Check-out:</strong> ${booking.departureDate}</p>
+                    <p><strong>Total price:</strong> ${booking.totalPrice} €</p>
                 </div>
             </div>
         </#list>
 
     </div>
 
-    <p>Если у вас есть вопросы, свяжитесь с нами.</p>
+    <p>If you have any questions, please do not hesitate to get in touch with us.</p>
 
     <div class="footer">
-        <p>С уважением, команда Hostel Casa Flamingo</p>
+        <p>With best regards,</p>
+            <p>the team Hostel Casa Flamingo</p>
+
     </div>
 </div>
 </body>
