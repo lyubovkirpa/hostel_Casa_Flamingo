@@ -6,6 +6,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.ConfirmationCodeRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,7 +44,7 @@ public class ConfirmationServiceImpl implements ConfirmationService {
         LocalDateTime tokenExpiration = confirmationCode.getExpired();
 
         if (tokenExpiration.isBefore(LocalDateTime.now())) {
-            throw new RestException("Token expired");
+            throw new RestException(HttpStatus.UNAUTHORIZED, "Token expired");
         }
         repository.delete(confirmationCode);
         return confirmationCode;
