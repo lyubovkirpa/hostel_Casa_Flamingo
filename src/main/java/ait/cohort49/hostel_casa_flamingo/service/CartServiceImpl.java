@@ -74,6 +74,9 @@ public class CartServiceImpl implements CartService {
     private BigDecimal calculateTotalCostForBed(CartItemBed cartItemBed) {
         BigDecimal bedPrice = cartItemBed.getBed().getPrice();
         long daysBetween = ChronoUnit.DAYS.between(cartItemBed.getEntryDate(), cartItemBed.getDepartureDate());
+        if (daysBetween <= 0) {
+            daysBetween = 1;
+        }
         return bedPrice.multiply(BigDecimal.valueOf(daysBetween));
     }
 
@@ -97,15 +100,30 @@ public class CartServiceImpl implements CartService {
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
 
-        Optional<CartItemBed> existingCartItem = userCart.getCartItemBeds()
+        /**
+         * Проверка на пересечение дат с уже забронированными периодами
+         */
+        boolean isOverlapping = userCart.getCartItemBeds()
                 .stream()
-                .filter(cartItemBed -> cartItemBed.getBed().equals(foundBed) &&
-                        cartItemBed.getEntryDate().equals(entryDate) &&
-                        cartItemBed.getDepartureDate().equals(departureDate))
-                .findFirst();
+                .anyMatch(cartItemBed ->
+                        cartItemBed.getBed().equals(foundBed) &&
+                                !(cartItemBed.getDepartureDate().isBefore(entryDate) || cartItemBed.getEntryDate().isAfter(departureDate))
+                );
+        if (isOverlapping) {
+            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates from " + entryDate + " to " + departureDate);
+        }
 
-        if (existingCartItem.isPresent()) {
-            throw new RestException("The bed with id " + foundBed.getId() + " for the dates from " + entryDate + " to " + departureDate + " is already in the cart.");
+        /**
+         * Проверка на пересечение с другими бронированиями в базе (не только в корзине текущего пользователя)
+         */
+        boolean isBooked = cartItemBedRepository.findAll().stream()
+                .anyMatch(cartItemBed ->
+                        cartItemBed.getBed().equals(foundBed) &&
+                                !(cartItemBed.getDepartureDate().isBefore(entryDate) || cartItemBed.getEntryDate().isAfter(departureDate))
+                );
+
+        if (isBooked) {
+            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates.");
         }
 
         CartItemBed newCartItemBed = new CartItemBed();
