@@ -67,19 +67,27 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<Image> getImagesByBed(Long bedId) {
+    public List<String> getImagesByBed(Long bedId) {
         Bed bed = bedRepository.findById(bedId)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed by id: " + bedId + " not found"));
 
-        return imageRepository.findAllByBed(bed);
+        return imageRepository.findAllByBed(bed)
+                .stream()
+                .map(Image::getS3Path)
+                .map(s3StorageService::getImageUrl)
+                .toList();
     }
 
     @Override
-    public List<Image> getImagesByRoom(Long roomId) {
+    public List<String> getImagesByRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Room by id: " + roomId + " not found"));
 
-        return imageRepository.findAllByRoom(room);
+        return imageRepository.findAllByRoom(room)
+                .stream()
+                .map(Image::getS3Path)
+                .map(s3StorageService::getImageUrl)
+                .toList();
     }
 
     @Override

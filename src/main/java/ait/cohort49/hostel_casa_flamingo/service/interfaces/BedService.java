@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.AvailableBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
@@ -19,6 +20,7 @@ public interface BedService {
 
     void deleteBedById(Long id);
 
-    List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate);
+    List<AvailableBedDto> getAvailableBeds(Long id, LocalDate entryDate, LocalDate departureDate);
 
+    BedDto mapBedToDtoWithImages(Bed bed);
 }

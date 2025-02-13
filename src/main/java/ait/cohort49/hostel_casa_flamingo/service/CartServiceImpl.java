@@ -45,22 +45,16 @@ public class CartServiceImpl implements CartService {
         Cart userCart = getCartEntity(authUser);
         CartDto cartDto = cartMappingService.mapEntityToDto(userCart);
 
-        long countBeds = userCart.getCartItemBeds().size();
-        cartDto.setCountBeds(countBeds);
-
         BigDecimal totalPriceBeds = BigDecimal.ZERO;
 
         for (CartItemBed cartItemBed : userCart.getCartItemBeds()) {
             BigDecimal totalCostForBed = calculateTotalCostForBed(cartItemBed);
 
-            BedDto bedDto = new BedDto();
-            bedDto.setId(cartItemBed.getBed().getId());
-            bedDto.setNumber(cartItemBed.getBed().getNumber());
-            bedDto.setType(cartItemBed.getBed().getType());
-            bedDto.setRoomId(cartItemBed.getBed().getRoom().getId());
-            // Устанавливаем пересчитанную цену
+            Bed cartItemBedBed = cartItemBed.getBed();
+            BedDto bedDto = bedService.mapBedToDtoWithImages(cartItemBedBed);
+            bedDto.setDescription(cartItemBedBed.getDescription());
             bedDto.setPrice(totalCostForBed);
-            // добавляем BedDto в CartItemBedDto
+
             CartItemBedDto cartItemBedDto = new CartItemBedDto();
             cartItemBedDto.setId(cartItemBed.getId());
             cartItemBedDto.setEntryDate(cartItemBed.getEntryDate());
@@ -70,6 +64,9 @@ public class CartServiceImpl implements CartService {
             cartDto.getBeds().add(cartItemBedDto);
             totalPriceBeds = totalPriceBeds.add(totalCostForBed);
         }
+
+        long countBeds = userCart.getCartItemBeds().size();
+        cartDto.setCountBeds(countBeds);
         cartDto.setTotalPriceBeds(totalPriceBeds);
         return cartDto;
     }
@@ -114,7 +111,6 @@ public class CartServiceImpl implements CartService {
         CartItemBed newCartItemBed = new CartItemBed();
         newCartItemBed.setBed(foundBed);
         newCartItemBed.setCart(userCart);
-
         newCartItemBed.setEntryDate(entryDate);
         newCartItemBed.setDepartureDate(departureDate);
 

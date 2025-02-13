@@ -11,11 +11,12 @@ import java.util.List;
 
 public interface BedRepository extends JpaRepository<Bed, Long> {
 
-    @Query("SELECT b FROM Bed b WHERE b.id NOT IN " +
-            "(SELECT booking.bed.id FROM Booking booking " +
-            "WHERE booking.entryDate <= :departureDate AND booking.departureDate >= :entryDate)")
-    List<Bed> findAvailableBeds(@Param("entryDate") LocalDate entryDate,
-                                @Param("departureDate") LocalDate departureDate);
+    @Query("SELECT b FROM Bed b WHERE b.room.id = :roomId AND b.id NOT IN (" +
+            "SELECT b.id FROM Booking bk WHERE bk.bed.id = b.id AND " +
+            "(bk.entryDate <= :departureDate AND bk.departureDate >= :entryDate))")
+    List<Bed> findAvailableBedsByRoomId(@Param("roomId") Long roomId,
+                                        @Param("entryDate") LocalDate entryDate,
+                                        @Param("departureDate") LocalDate departureDate);
 
     boolean existsByRoomIdAndNumber(Long roomId, String number);
 }

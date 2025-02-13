@@ -10,7 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
-import ait.cohort49.hostel_casa_flamingo.service.interfaces.ImageService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.RoomMappingService;
@@ -29,37 +29,37 @@ public class RoomServiceImpl implements RoomService {
     private final CartItemBedRepository cartItemBedRepository;
     private final BedRepository bedRepository;
     private final S3StorageService s3StorageService;
-    private final ImageService imageService;
+    private final BedService bedService;
 
     public RoomServiceImpl(RoomRepository roomRepository,
                            RoomMappingService roomMappingService,
                            CartItemBedRepository cartItemBedRepository,
                            BedRepository bedRepository,
                            S3StorageService s3StorageService,
-                           ImageService imageService) {
+                           BedService bedService) {
         this.roomRepository = roomRepository;
         this.roomMappingService = roomMappingService;
         this.cartItemBedRepository = cartItemBedRepository;
         this.bedRepository = bedRepository;
         this.s3StorageService = s3StorageService;
-        this.imageService = imageService;
+        this.bedService = bedService;
     }
 
     @Override
     public RoomDto getRoomById(Long id) {
         Room room = findByIdOrThrow(id);
-        return mapBedToDtoWithImages(room);
+        return mapBedToDtoWithImagesForRoom(room);
     }
 
     @Override
     public List<RoomDto> getAllRooms() {
         return roomRepository.findAll()
                 .stream()
-                .map(this::mapBedToDtoWithImages)
+                .map(this::mapBedToDtoWithImagesForRoom)
                 .toList();
     }
 
-    private RoomDto mapBedToDtoWithImages(Room room) {
+    private RoomDto mapBedToDtoWithImagesForRoom(Room room) {
         List<Image> roomImages = room.getImages();
         List<String> roomImagesUrls = s3StorageService.getImageUrl(roomImages);
 
@@ -71,11 +71,13 @@ public class RoomServiceImpl implements RoomService {
         RoomDto roomDto = roomMappingService.mapEntityToDto(room);
         roomDto.setImageUrls(roomImagesUrls);
         roomDto.setPrice(priceRoom);
+        roomDto.setDescription(room.getDescription());
 
         for (BedDto bedDto : roomDto.getBeds()) {
-            List<Image> bedImages = imageService.getImagesByBed(bedDto.getId());
-            List<String> imagesByBed = s3StorageService.getImageUrl(bedImages);
-            bedDto.setImageUrls(imagesByBed);
+            Bed bed = bedRepository.findById(bedDto.getId())
+                    .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed not found with id: " + bedDto.getId()));
+            BedDto bedImagesUrls = bedService.mapBedToDtoWithImages(bed);
+            bedDto.setImageUrls(bedImagesUrls.getImageUrls());
         }
         return roomDto;
     }
