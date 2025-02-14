@@ -104,7 +104,7 @@ public class RoomController {
     }
 
 
-    @PutMapping("/updateRoom/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
         return roomService.updateRoom(id, roomDto);
