@@ -104,6 +104,13 @@ public class RoomController {
     }
 
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
+        return roomService.updateRoom(id, roomDto);
+    }
+
+
     @Operation(summary = "Delete room", description = "Delete room by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Room deleted",

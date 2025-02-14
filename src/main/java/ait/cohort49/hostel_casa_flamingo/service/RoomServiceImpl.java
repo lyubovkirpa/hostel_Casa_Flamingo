@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -86,6 +87,36 @@ public class RoomServiceImpl implements RoomService {
         return roomMappingService.mapEntityToDto(roomRepository.save(room));
     }
 
+    @Transactional
+    @Override
+    public RoomDto updateRoom(Long id, RoomDto requestDto) {
+        Room existingRoom = findByIdOrThrow(id);
+
+        existingRoom.setNumber(requestDto.getNumber());
+        existingRoom.setType(requestDto.getType());
+
+        List<Bed> updatedBeds = new ArrayList<>();
+        for (BedDto bedDto : requestDto.getBeds()) {
+
+            // Поиск кровати в базе по её id
+            Bed bed = bedRepository.findById(bedDto.getId())
+                    .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND,
+                            "Bed not found by id: " + bedDto.getId()));
+
+            bed.setNumber(bedDto.getNumber());
+            bed.setType(bedDto.getType());
+            bed.setPrice(bedDto.getPrice());
+
+            updatedBeds.add(bed);
+        }
+        // Привязка обновленного списока к комнате
+        existingRoom.setBeds(updatedBeds);
+        Room savedRoom = roomRepository.save(existingRoom);
+        RoomDto updatedRoomDto = roomMappingService.mapEntityToDto(savedRoom);
+
+        return updatedRoomDto;
+    }
+
 
     @Override
     @Transactional
@@ -135,6 +166,17 @@ public class RoomServiceImpl implements RoomService {
                 .stream()
                 .map(Bed::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public RoomDto updateRoom(Long id) {
+
+        return null;
+    }
+
+    @Override
+    public Room update(Long id, Room updatedRoom) {
+        return null;
     }
 
 }

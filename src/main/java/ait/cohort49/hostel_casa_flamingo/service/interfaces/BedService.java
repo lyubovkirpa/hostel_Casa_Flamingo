@@ -17,6 +17,8 @@ public interface BedService {
 
     List<BedDto> getAllBeds();
 
+    BedDto updateBed(Long id, BedDto bedDto);
+
     void deleteBedById(Long id);
 
     List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate);

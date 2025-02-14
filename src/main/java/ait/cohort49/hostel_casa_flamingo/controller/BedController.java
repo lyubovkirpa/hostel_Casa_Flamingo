@@ -104,6 +104,12 @@ public class BedController {
     }
 
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public BedDto updateBed(@PathVariable Long id, @RequestBody BedDto bedDto) {
+        return bedService.updateBed(id, bedDto);
+    }
+
     @Operation(summary = "Delete bed", description = "Delete bed by ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Bed deleted",

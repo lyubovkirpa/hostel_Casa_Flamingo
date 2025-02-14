@@ -67,6 +67,19 @@ public class BedServiceImpl implements BedService {
                 .toList();
     }
 
+    @Override
+    public BedDto updateBed(Long id, BedDto bedDto) {
+        Bed existingBed = bedRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Bed not found by id: " + id));
+
+        existingBed.setNumber(bedDto.getNumber());
+        existingBed.setType(bedDto.getType());
+        existingBed.setPrice(bedDto.getPrice());
+
+        Bed savedBed = bedRepository.save(existingBed);
+
+        return bedMappingService.mapEntityToDto(savedBed);
+    }
 
     @Override
     public void deleteBedById(Long id) {
