@@ -104,7 +104,7 @@ public class BedController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateBed/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BedDto updateBed(@PathVariable Long id, @RequestBody BedDto bedDto) {
         return bedService.updateBed(id, bedDto);
