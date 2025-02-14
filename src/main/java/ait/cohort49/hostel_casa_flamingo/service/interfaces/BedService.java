@@ -3,7 +3,6 @@ package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -18,6 +17,8 @@ public interface BedService {
     List<BedDto> getAllBeds();
 
     void deleteBedById(Long id);
+
+    void deleteBed(Bed bed);
 
     List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate);
 

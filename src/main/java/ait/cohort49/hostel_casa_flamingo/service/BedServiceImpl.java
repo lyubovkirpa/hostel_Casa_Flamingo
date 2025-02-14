@@ -4,14 +4,17 @@ import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Booking;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.BookingRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -22,13 +25,21 @@ public class BedServiceImpl implements BedService {
     private final BedRepository bedRepository;
     private final BedMappingService bedMappingService;
     private final RoomService roomService;
+    private final BookingRepository bookingRepository;
+    private final CartItemBedRepository cartItemBedRepository;
 
     public BedServiceImpl(BedRepository bedRepository,
                           BedMappingService bedMappingService,
-                          RoomService roomService) {
+                          RoomService roomService,
+                          BookingRepository bookingRepository,
+                          CartItemBedRepository cartItemBedRepository
+    ) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
         this.roomService = roomService;
+
+        this.bookingRepository = bookingRepository;
+        this.cartItemBedRepository = cartItemBedRepository;
     }
 
     @Override
@@ -65,8 +76,28 @@ public class BedServiceImpl implements BedService {
 
     @Override
     public void deleteBedById(Long id) {
-        getBedOrThrow(id);
-        bedRepository.deleteById(id);
+        Bed bed = getBedOrThrow(id);
+        deleteBed(bed);
+    }
+
+    @Transactional
+    @Override
+    public void deleteBed(Bed bed) {
+        Long bedId = bed.getId();
+        if (hasActiveBookings(bedId)) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+        }
+
+        if (isBedInCart(bedId)) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+        }
+
+        List<Booking> pastBookings = getPastBookings(bedId);
+        {
+            if (pastBookings != null && !pastBookings.isEmpty())
+                deletePastBookings(pastBookings);
+        }
+        bedRepository.delete(bed);
     }
 
     @Override
@@ -75,5 +106,22 @@ public class BedServiceImpl implements BedService {
                 .stream()
                 .map(bedMappingService::mapEntityToDto)
                 .toList();
+    }
+
+    public boolean isBedInCart(Long bedId) {
+        return cartItemBedRepository.existsByBedId(bedId);
+    }
+
+    public boolean hasActiveBookings(Long bedId) {
+        return bookingRepository.existsByIdAndDepartureDateAfter(bedId, LocalDate.now());
+    }
+
+    @Transactional
+    public List<Booking> getPastBookings(Long bedId) {
+        return bookingRepository.findBedByIdAndDepartureDateBefore(bedId, LocalDate.now());
+    }
+
+    public void deletePastBookings(List<Booking> pastBookings) {
+        bookingRepository.deleteAll(pastBookings);
     }
 }
