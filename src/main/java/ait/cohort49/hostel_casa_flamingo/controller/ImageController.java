@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.ImageInfoDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.service.BedServiceImpl;
@@ -145,7 +146,7 @@ public class ImageController {
      * Получение изображений для кровати
      */
     @GetMapping("/bed/{bedId}")
-    public List<String> getImagesByBed(@PathVariable Long bedId) {
+    public List<ImageInfoDto> getImagesByBed(@PathVariable Long bedId) {
         return imageService.getImagesByBed(bedId);
     }
 
@@ -153,7 +154,7 @@ public class ImageController {
      * Получение изображений для комнаты
      */
     @GetMapping("/room/{roomId}")
-    public List<String> getImagesByRoom(@PathVariable Long roomId) {
+    public List<ImageInfoDto> getImagesByRoom(@PathVariable Long roomId) {
         return imageService.getImagesByRoom(roomId);
     }
 
