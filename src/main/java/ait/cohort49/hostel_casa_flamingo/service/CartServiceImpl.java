@@ -10,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
@@ -32,13 +33,15 @@ public class CartServiceImpl implements CartService {
     private final CartMappingService cartMappingService;
     private final UserRepository userRepository;
     private final CartItemBedRepository cartItemBedRepository;
+    private final RoomRepository roomRepository;
 
-    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository) {
+    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository, RoomRepository roomRepository) {
         this.bedService = bedService;
         this.cartRepository = cartRepository;
         this.cartMappingService = cartMappingService;
         this.userRepository = userRepository;
         this.cartItemBedRepository = cartItemBedRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -46,22 +49,16 @@ public class CartServiceImpl implements CartService {
         Cart userCart = getCartEntity(authUser);
         CartDto cartDto = cartMappingService.mapEntityToDto(userCart);
 
-        long countBeds = userCart.getCartItemBeds().size();
-        cartDto.setCountBeds(countBeds);
-
         BigDecimal totalPriceBeds = BigDecimal.ZERO;
 
         for (CartItemBed cartItemBed : userCart.getCartItemBeds()) {
             BigDecimal totalCostForBed = calculateTotalCostForBed(cartItemBed);
 
-            BedDto bedDto = new BedDto();
-            bedDto.setId(cartItemBed.getBed().getId());
-            bedDto.setNumber(cartItemBed.getBed().getNumber());
-            bedDto.setType(cartItemBed.getBed().getType());
-            bedDto.setRoomId(cartItemBed.getBed().getRoom().getId());
-            // Устанавливаем пересчитанную цену
+            Bed cartItemBedBed = cartItemBed.getBed();
+            BedDto bedDto = bedService.mapBedToDtoWithImages(cartItemBedBed);
+            bedDto.setDescription(cartItemBedBed.getDescription());
             bedDto.setPrice(totalCostForBed);
-            // добавляем BedDto в CartItemBedDto
+
             CartItemBedDto cartItemBedDto = new CartItemBedDto();
             cartItemBedDto.setId(cartItemBed.getId());
             cartItemBedDto.setEntryDate(cartItemBed.getEntryDate());
@@ -71,6 +68,9 @@ public class CartServiceImpl implements CartService {
             cartDto.getBeds().add(cartItemBedDto);
             totalPriceBeds = totalPriceBeds.add(totalCostForBed);
         }
+
+        long countBeds = userCart.getCartItemBeds().size();
+        cartDto.setCountBeds(countBeds);
         cartDto.setTotalPriceBeds(totalPriceBeds);
         return cartDto;
     }
@@ -78,6 +78,9 @@ public class CartServiceImpl implements CartService {
     private BigDecimal calculateTotalCostForBed(CartItemBed cartItemBed) {
         BigDecimal bedPrice = cartItemBed.getBed().getPrice();
         long daysBetween = ChronoUnit.DAYS.between(cartItemBed.getEntryDate(), cartItemBed.getDepartureDate());
+        if (daysBetween <= 0) {
+            daysBetween = 1;
+        }
         return bedPrice.multiply(BigDecimal.valueOf(daysBetween));
     }
 
@@ -101,21 +104,35 @@ public class CartServiceImpl implements CartService {
         Bed foundBed = bedService.getBedOrThrow(bedId);
         Cart userCart = getCartEntity(authUser);
 
-        Optional<CartItemBed> existingCartItem = userCart.getCartItemBeds()
+        /**
+         * Проверка на пересечение дат с уже забронированными периодами
+         */
+        boolean isOverlapping = userCart.getCartItemBeds()
                 .stream()
-                .filter(cartItemBed -> cartItemBed.getBed().equals(foundBed) &&
-                        cartItemBed.getEntryDate().equals(entryDate) &&
-                        cartItemBed.getDepartureDate().equals(departureDate))
-                .findFirst();
+                .anyMatch(cartItemBed ->
+                        cartItemBed.getBed().equals(foundBed) &&
+                                !(cartItemBed.getDepartureDate().isBefore(entryDate) || cartItemBed.getEntryDate().isAfter(departureDate))
+                );
+        if (isOverlapping) {
+            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates from " + entryDate + " to " + departureDate);
+        }
 
-        if (existingCartItem.isPresent()) {
-            throw new RestException(HttpStatus.NOT_FOUND, "The bed with id " + foundBed.getId() + " for the dates from " + entryDate + " to " + departureDate + " is already in the cart.");
+        /**
+         * Проверка на пересечение с другими бронированиями в базе (не только в корзине текущего пользователя)
+         */
+        boolean isBooked = cartItemBedRepository.findAll().stream()
+                .anyMatch(cartItemBed ->
+                        cartItemBed.getBed().equals(foundBed) &&
+                                !(cartItemBed.getDepartureDate().isBefore(entryDate) || cartItemBed.getEntryDate().isAfter(departureDate))
+                );
+
+        if (isBooked) {
+            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates.");
         }
 
         CartItemBed newCartItemBed = new CartItemBed();
         newCartItemBed.setBed(foundBed);
         newCartItemBed.setCart(userCart);
-
         newCartItemBed.setEntryDate(entryDate);
         newCartItemBed.setDepartureDate(departureDate);
 
@@ -158,5 +175,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public void delete(Cart cart) {
         cartRepository.delete(cart);
+    }
+
+    @Override
+    public boolean isBedInCart(Long bedId) {
+        return cartItemBedRepository.existsByBedId(bedId);
     }
 }

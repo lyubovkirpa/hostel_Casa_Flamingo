@@ -8,12 +8,12 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
-import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
-import ait.cohort49.hostel_casa_flamingo.service.interfaces.ImageService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.RoomMappingService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,40 +27,37 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomMappingService roomMappingService;
-    private final CartItemBedRepository cartItemBedRepository;
     private final BedRepository bedRepository;
     private final S3StorageService s3StorageService;
-    private final ImageService imageService;
+    private final BedService bedService;
 
     public RoomServiceImpl(RoomRepository roomRepository,
                            RoomMappingService roomMappingService,
-                           CartItemBedRepository cartItemBedRepository,
                            BedRepository bedRepository,
                            S3StorageService s3StorageService,
-                           ImageService imageService) {
+                           @Lazy BedService bedService) {
         this.roomRepository = roomRepository;
         this.roomMappingService = roomMappingService;
-        this.cartItemBedRepository = cartItemBedRepository;
         this.bedRepository = bedRepository;
         this.s3StorageService = s3StorageService;
-        this.imageService = imageService;
+        this.bedService = bedService;
     }
 
     @Override
     public RoomDto getRoomById(Long id) {
         Room room = findByIdOrThrow(id);
-        return mapBedToDtoWithImages(room);
+        return mapBedToDtoWithImagesForRoom(room);
     }
 
     @Override
     public List<RoomDto> getAllRooms() {
         return roomRepository.findAll()
                 .stream()
-                .map(this::mapBedToDtoWithImages)
+                .map(this::mapBedToDtoWithImagesForRoom)
                 .toList();
     }
 
-    private RoomDto mapBedToDtoWithImages(Room room) {
+    private RoomDto mapBedToDtoWithImagesForRoom(Room room) {
         List<Image> roomImages = room.getImages();
         List<String> roomImagesUrls = s3StorageService.getImageUrl(roomImages);
 
@@ -72,11 +69,13 @@ public class RoomServiceImpl implements RoomService {
         RoomDto roomDto = roomMappingService.mapEntityToDto(room);
         roomDto.setImageUrls(roomImagesUrls);
         roomDto.setPrice(priceRoom);
+        roomDto.setDescription(room.getDescription());
 
         for (BedDto bedDto : roomDto.getBeds()) {
-            List<Image> bedImages = imageService.getImagesByBed(bedDto.getId());
-            List<String> imagesByBed = s3StorageService.getImageUrl(bedImages);
-            bedDto.setImageUrls(imagesByBed);
+            Bed bed = bedRepository.findById(bedDto.getId())
+                    .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed not found with id: " + bedDto.getId()));
+            BedDto bedImagesUrls = bedService.mapBedToDtoWithImages(bed);
+            bedDto.setImageUrls(bedImagesUrls.getImageUrls());
         }
         return roomDto;
     }
@@ -122,29 +121,11 @@ public class RoomServiceImpl implements RoomService {
     @Transactional
     public void deleteRoom(Long id) {
         Room room = findByIdOrThrow(id);
+        List<Bed> beds = room.getBeds();
 
-        //        TODO
-//        1. Достать все кровати найденной комнаты
-//        2. Проверить есть ли указанные комнаты в Cart, убедиться в том пытается ли
-//        их ктото забронировать
-//        3. Если пытается ктото забронировать -выкинуть ошибку, что ее пытается ктото забронировать
-//        4. Проделать шаг 2,3 и для Booking, n е выкинуть ошибку, в случае если кровати в комнате
-//        забронированы на сегодня или будущее в Booking. Если подтверждение было в прошлом,
-//        удалить все связанные  Booking для каждой кровати в этой комнате, затем удалить саму кровать
-//        написать в CartService метод, который будет проверять наличие кровати в табл Cart
-//        в BookingService должен быть метод(есть ли кровати, которые подтверждены на сегодгня
-//        или будущее-> шаг 4; если метод вернет false -> обращаться к другому методу, который вернет список
-//        бронирований прошлого по выбранной кровати->каждое бронировнаие из списка удалить
-
-
-        for (Bed bed : room.getBeds()) {
-            cartItemBedRepository.deleteBedById(bed.getId());
+        for (Bed bed : beds) {
+            bedService.deleteBed(bed);
         }
-
-        for (Bed bed : room.getBeds()) {
-            bedRepository.delete(bed);
-        }
-
         roomRepository.delete(room);
     }
 

@@ -17,5 +17,6 @@ public interface BookingService {
     List<Booking> getPastBookings(Long bedId);
 
     void deletePastBookings(Long bedId);
+
     void deleteBedWithoutFutureBookings(Long bedId);
 }
