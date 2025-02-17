@@ -27,7 +27,6 @@ public class BookingServiceImpl implements BookingService {
     private final BookingEmailService bookingEmailService;
     private final BedServiceImpl bedServiceImpl;
 
-
     public BookingServiceImpl(BookingRepository bookingRepository,
                               CartService cartService,
                               BookingMappingService bookingMappingService,
@@ -92,7 +91,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean hasActiveBookings(Long bedId){
+    public boolean hasActiveBookings(Long bedId) {
         return bookingRepository.existsByIdAndDepartureDateAfter(bedId, LocalDate.now());
     }
 

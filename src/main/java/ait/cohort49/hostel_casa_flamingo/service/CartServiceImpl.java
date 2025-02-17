@@ -10,6 +10,7 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
@@ -32,13 +33,15 @@ public class CartServiceImpl implements CartService {
     private final CartMappingService cartMappingService;
     private final UserRepository userRepository;
     private final CartItemBedRepository cartItemBedRepository;
+    private final RoomRepository roomRepository;
 
-    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository) {
+    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository, RoomRepository roomRepository) {
         this.bedService = bedService;
         this.cartRepository = cartRepository;
         this.cartMappingService = cartMappingService;
         this.userRepository = userRepository;
         this.cartItemBedRepository = cartItemBedRepository;
+        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -172,5 +175,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public void delete(Cart cart) {
         cartRepository.delete(cart);
+    }
+
+    @Override
+    public boolean isBedInCart(Long bedId) {
+        return cartItemBedRepository.existsByBedId(bedId);
     }
 }

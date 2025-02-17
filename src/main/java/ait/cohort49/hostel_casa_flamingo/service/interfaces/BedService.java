@@ -20,6 +20,8 @@ public interface BedService {
 
     void deleteBedById(Long id);
 
+    void deleteBed(Bed bed);
+
     List<AvailableBedDto> getAvailableBeds(Long id, LocalDate entryDate, LocalDate departureDate);
 
     BedDto mapBedToDtoWithImages(Bed bed);
