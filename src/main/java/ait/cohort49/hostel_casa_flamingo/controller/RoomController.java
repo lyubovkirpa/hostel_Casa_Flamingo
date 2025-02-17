@@ -122,7 +122,7 @@ public class RoomController {
                             schema = @Schema(implementation = String.class, example = "Room not found"))
             )
     })
-// swagger
+
     @PutMapping("/updateRoom/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
