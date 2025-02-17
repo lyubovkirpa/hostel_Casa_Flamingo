@@ -57,7 +57,7 @@ public class BookingServiceImpl implements BookingService {
             LocalDate departureDate = cartItemBed.getDepartureDate();
 
             if (bookingRepository.isBedBooked(bedId, entryDate, departureDate)) {
-                throw new RestException(HttpStatus.NOT_FOUND, "The bed " + bedId + " for the dates from " + entryDate + " to " + departureDate + " is already booked.");
+                throw new RestException(HttpStatus.NOT_FOUND, "This bed for the dates from " + entryDate + " to " + departureDate + " is already booked.");
             }
 
             Booking booking = new Booking(
