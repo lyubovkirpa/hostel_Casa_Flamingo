@@ -8,7 +8,6 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
-import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
@@ -27,21 +26,17 @@ public class RoomServiceImpl implements RoomService {
 
     private final RoomRepository roomRepository;
     private final RoomMappingService roomMappingService;
-    private final CartItemBedRepository cartItemBedRepository;
     private final BedRepository bedRepository;
     private final S3StorageService s3StorageService;
-    private final BedService bedService;
     private final BedService bedService;
 
     public RoomServiceImpl(RoomRepository roomRepository,
                            RoomMappingService roomMappingService,
-                           CartItemBedRepository cartItemBedRepository,
                            BedRepository bedRepository,
                            S3StorageService s3StorageService,
                            @Lazy BedService bedService) {
         this.roomRepository = roomRepository;
         this.roomMappingService = roomMappingService;
-        this.cartItemBedRepository = cartItemBedRepository;
         this.bedRepository = bedRepository;
         this.s3StorageService = s3StorageService;
         this.bedService = bedService;
