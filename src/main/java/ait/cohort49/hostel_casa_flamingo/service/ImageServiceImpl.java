@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.ImageInfoDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
@@ -67,32 +68,36 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public List<String> getImagesByBed(Long bedId) {
+    public List<ImageInfoDto> getImagesByBed(Long bedId) {
         Bed bed = bedRepository.findById(bedId)
-                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Bed by id: " + bedId + " not found"));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "This bed is not found"));
 
         return imageRepository.findAllByBed(bed)
                 .stream()
-                .map(Image::getS3Path)
-                .map(s3StorageService::getImageUrl)
+                .map(image -> {
+                    String imageUrl = s3StorageService.getImageUrl(image.getS3Path());
+                    return new ImageInfoDto(image.getId(), imageUrl);
+                })
                 .toList();
     }
 
     @Override
-    public List<String> getImagesByRoom(Long roomId) {
+    public List<ImageInfoDto> getImagesByRoom(Long roomId) {
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Room by id: " + roomId + " not found"));
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "This room is not found"));
 
         return imageRepository.findAllByRoom(room)
                 .stream()
-                .map(Image::getS3Path)
-                .map(s3StorageService::getImageUrl)
+                .map(image -> {
+                    String imageUrl = s3StorageService.getImageUrl(image.getS3Path());
+                    return new ImageInfoDto(image.getId(), imageUrl);
+                })
                 .toList();
     }
 
     @Override
     public void deleteImage(Long id) {
-        // Находим изображение по ID
+
         Image image = imageRepository.findById(id)
                 .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Image by id: " + id + " not found"));
 

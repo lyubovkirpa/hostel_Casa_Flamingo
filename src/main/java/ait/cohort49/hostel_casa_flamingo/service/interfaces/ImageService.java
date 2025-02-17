@@ -1,5 +1,6 @@
 package ait.cohort49.hostel_casa_flamingo.service.interfaces;
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.ImageInfoDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,9 +14,9 @@ public interface ImageService {
 
     String uploadImageForRoom(MultipartFile file, Room room);
 
-    List<String> getImagesByBed(Long bedId);
+    List<ImageInfoDto> getImagesByBed(Long bedId);
 
-    List<String> getImagesByRoom(Long roomId);
+    List<ImageInfoDto> getImagesByRoom(Long roomId);
 
     void deleteImage(Long id);
 

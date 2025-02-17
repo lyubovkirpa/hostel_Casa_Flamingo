@@ -98,11 +98,11 @@ public class BedServiceImpl implements BedService {
     public void deleteBed(Bed bed) {
         Long bedId = bed.getId();
         if (hasActiveBookings(bedId)) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+            throw new RestException(HttpStatus.BAD_REQUEST, "This bed is already booked");
         }
 
         if (isBedInCart(bedId)) {
-            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+            throw new RestException(HttpStatus.BAD_REQUEST, "This bed is already booked");
         }
 
         List<Booking> pastBookings = getPastBookings(bedId);

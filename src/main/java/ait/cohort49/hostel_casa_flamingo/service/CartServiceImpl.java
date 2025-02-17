@@ -10,12 +10,10 @@ import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.CartRepository;
-import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.CartService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.CartMappingService;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,15 +31,14 @@ public class CartServiceImpl implements CartService {
     private final CartMappingService cartMappingService;
     private final UserRepository userRepository;
     private final CartItemBedRepository cartItemBedRepository;
-    private final RoomRepository roomRepository;
 
-    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository, RoomRepository roomRepository) {
+
+    public CartServiceImpl(BedService bedService, CartRepository cartRepository, CartMappingService cartMappingService, UserRepository userRepository, CartItemBedRepository cartItemBedRepository) {
         this.bedService = bedService;
         this.cartRepository = cartRepository;
         this.cartMappingService = cartMappingService;
         this.userRepository = userRepository;
         this.cartItemBedRepository = cartItemBedRepository;
-        this.roomRepository = roomRepository;
     }
 
     @Override
@@ -114,7 +111,7 @@ public class CartServiceImpl implements CartService {
                                 !(cartItemBed.getDepartureDate().isBefore(entryDate) || cartItemBed.getEntryDate().isAfter(departureDate))
                 );
         if (isOverlapping) {
-            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates from " + entryDate + " to " + departureDate);
+            throw new RestException("This bed is already booked for the selected dates from " + entryDate + " to " + departureDate);
         }
 
         /**
@@ -127,7 +124,7 @@ public class CartServiceImpl implements CartService {
                 );
 
         if (isBooked) {
-            throw new RestException("The bed with id " + foundBed.getId() + " is already booked for the selected dates.");
+            throw new RestException("This bed is already booked for the selected dates.");
         }
 
         CartItemBed newCartItemBed = new CartItemBed();
