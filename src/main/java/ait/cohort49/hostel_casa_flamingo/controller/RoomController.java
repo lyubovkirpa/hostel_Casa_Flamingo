@@ -104,26 +104,7 @@ public class RoomController {
     }
 
 
-    @Operation(summary = "Update room", description = "Update room by ID")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "204", description = "Room updated",
-                    content = @Content
-            ),
-            @ApiResponse(responseCode = "401", description = "User not authenticated",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class, example = "User not authenticated"))
-            ),
-            @ApiResponse(responseCode = "403", description = "User doesn't have rights",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class, example = "User doesn't has rights"))
-            ),
-            @ApiResponse(responseCode = "404", description = "Room not found",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = String.class, example = "Room not found"))
-            )
-    })
-
-    @PutMapping("/updateRoom/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RoomDto updateRoom(@PathVariable Long id, @RequestBody RoomDto roomDto) {
         return roomService.updateRoom(id, roomDto);

@@ -1,6 +1,7 @@
 package ait.cohort49.hostel_casa_flamingo.controller;
 
 
+import ait.cohort49.hostel_casa_flamingo.model.dto.AvailableBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
@@ -123,7 +124,7 @@ public class BedController {
             )
     })
 
-    @PutMapping("/updateBed/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BedDto updateBed(@PathVariable Long id, @RequestBody BedDto bedDto) {
         return bedService.updateBed(id, bedDto);
@@ -158,16 +159,17 @@ public class BedController {
         bedService.deleteBedById(id);
     }
 
-    @GetMapping("/available-beds")
-    public List<BedDto> getAvailableBeds(@FutureOrPresent
-                                         @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                         @Schema(description = "Entry date", type = "string", format = "date", example = "2025-02-10")
-                                         @RequestParam LocalDate entryDate,
+    @GetMapping("/available-beds/rooms/{roomId}")
+    public List<AvailableBedDto> getAvailableBeds(
+            @PathVariable Long roomId,
 
-                                         @FutureOrPresent
-                                         @DateTimeFormat(pattern = "yyyy-MM-dd")
-                                         @Schema(description = "Departure date", type = "string", format = "date", example = "2025-02-15")
-                                         @RequestParam LocalDate departureDate) {
-        return bedService.getAvailableBeds(entryDate, departureDate);
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            @Schema(description = "Entry date", type = "string", format = "date", example = "2025-02-10")
+            @RequestParam @FutureOrPresent LocalDate entryDate,
+
+            @DateTimeFormat(pattern = "yyyy-MM-dd")
+            @Schema(description = "Departure date", type = "string", format = "date", example = "2025-02-15")
+            @RequestParam @FutureOrPresent LocalDate departureDate) {
+        return bedService.getAvailableBeds(roomId, entryDate, departureDate);
     }
 }

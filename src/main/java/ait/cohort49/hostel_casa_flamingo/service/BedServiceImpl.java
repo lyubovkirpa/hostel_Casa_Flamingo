@@ -1,18 +1,26 @@
 package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
+import ait.cohort49.hostel_casa_flamingo.model.dto.AvailableBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BedDto;
 import ait.cohort49.hostel_casa_flamingo.model.dto.CreateBedDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Bed;
+import ait.cohort49.hostel_casa_flamingo.model.entity.Booking;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Image;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Room;
 import ait.cohort49.hostel_casa_flamingo.repository.BedRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.BookingRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.CartItemBedRepository;
+import ait.cohort49.hostel_casa_flamingo.repository.RoomRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.BedService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.RoomService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.S3StorageService;
+import ait.cohort49.hostel_casa_flamingo.service.mapping.AvailableBedMappingService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.BedMappingService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,15 +33,27 @@ public class BedServiceImpl implements BedService {
     private final BedMappingService bedMappingService;
     private final RoomService roomService;
     private final S3StorageService s3StorageService;
+    private final AvailableBedMappingService availableBedMappingService;
+    private final RoomRepository roomRepository;
+    private final BookingRepository bookingRepository;
+    private final CartItemBedRepository cartItemBedRepository;
 
     public BedServiceImpl(BedRepository bedRepository,
                           BedMappingService bedMappingService,
-                          RoomService roomService,
-                          S3StorageService s3StorageService) {
+                          @Lazy RoomService roomService,
+                          S3StorageService s3StorageService,
+                          AvailableBedMappingService availableBedMappingService,
+                          RoomRepository roomRepository,
+                          BookingRepository bookingRepository,
+                          CartItemBedRepository cartItemBedRepository) {
         this.bedRepository = bedRepository;
         this.bedMappingService = bedMappingService;
         this.roomService = roomService;
         this.s3StorageService = s3StorageService;
+        this.availableBedMappingService = availableBedMappingService;
+        this.roomRepository = roomRepository;
+        this.bookingRepository = bookingRepository;
+        this.cartItemBedRepository = cartItemBedRepository;
     }
 
     @Override
@@ -83,18 +103,64 @@ public class BedServiceImpl implements BedService {
 
     @Override
     public void deleteBedById(Long id) {
-        getBedOrThrow(id);
-        bedRepository.deleteById(id);
+        Bed bed = getBedOrThrow(id);
+        deleteBed(bed);
+    }
+
+    @Transactional
+    @Override
+    public void deleteBed(Bed bed) {
+        Long bedId = bed.getId();
+        if (hasActiveBookings(bedId)) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+        }
+
+        if (isBedInCart(bedId)) {
+            throw new RestException(HttpStatus.BAD_REQUEST, "Кровать с id " + bedId + " уже забронирована");
+        }
+
+        List<Booking> pastBookings = getPastBookings(bedId);
+        {
+            if (pastBookings != null && !pastBookings.isEmpty())
+                deletePastBookings(pastBookings);
+        }
+        bedRepository.delete(bed);
     }
 
     @Override
-    public List<BedDto> getAvailableBeds(LocalDate entryDate, LocalDate departureDate) {
-        return bedRepository.findAvailableBeds(entryDate, departureDate).stream()
-                .map(this::mapBedToDtoWithImages)
+    public List<AvailableBedDto> getAvailableBeds(Long id, LocalDate entryDate, LocalDate departureDate) {
+
+        roomRepository.findById(id)
+                .orElseThrow(() -> new RestException(HttpStatus.NOT_FOUND, "Room with id " + id + " not found"));
+
+        return bedRepository.findAvailableBedsByRoomId(id, entryDate, departureDate).stream()
+                .map(bed -> {
+                    AvailableBedDto availableBedDto = availableBedMappingService.mapBedToAvailableBedDto(bed);
+                    availableBedDto.setAvailable(true);
+                    return availableBedDto;
+                })
                 .toList();
     }
 
-    private BedDto mapBedToDtoWithImages(Bed bed) {
+    public boolean isBedInCart(Long bedId) {
+        return cartItemBedRepository.existsByBedId(bedId);
+    }
+
+    public boolean hasActiveBookings(Long bedId) {
+        return bookingRepository.existsByIdAndDepartureDateAfter(bedId, LocalDate.now());
+    }
+
+    @Transactional
+    public List<Booking> getPastBookings(Long bedId) {
+        return bookingRepository.findBedByIdAndDepartureDateBefore(bedId, LocalDate.now());
+    }
+
+    public void deletePastBookings(List<Booking> pastBookings) {
+        bookingRepository.deleteAll(pastBookings);
+    }
+
+    @Override
+    public BedDto mapBedToDtoWithImages(Bed bed) {
         List<Image> bedImages = bed.getImages();
         List<String> bedImagesUrls = s3StorageService.getImageUrl(bedImages);
         BedDto bedDto = bedMappingService.mapEntityToDto(bed);
