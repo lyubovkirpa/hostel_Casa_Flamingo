@@ -122,7 +122,7 @@ public class BedController {
                                     example = "Bed not found"))
             )
     })
-
+// swagger
     @PutMapping("/updateBed/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public BedDto updateBed(@PathVariable Long id, @RequestBody BedDto bedDto) {
