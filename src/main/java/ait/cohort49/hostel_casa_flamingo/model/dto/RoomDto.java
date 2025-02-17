@@ -16,6 +16,8 @@ public class RoomDto {
     private String type;
     private BigDecimal price;
     private List<BedDto> beds = new ArrayList<>();
+    private List<String> imageUrls;
+    public String description;
 
     public String getType() {
         return type;
@@ -57,15 +59,32 @@ public class RoomDto {
         this.id = id;
     }
 
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RoomDto roomDto)) return false;
-        return Objects.equals(id, roomDto.id) && Objects.equals(number, roomDto.number) && Objects.equals(type, roomDto.type) && Objects.equals(price, roomDto.price) && Objects.equals(beds, roomDto.beds);
+        if (o == null || getClass() != o.getClass()) return false;
+        RoomDto roomDto = (RoomDto) o;
+        return Objects.equals(id, roomDto.id) && Objects.equals(number, roomDto.number) && Objects.equals(type, roomDto.type) && Objects.equals(price, roomDto.price) && Objects.equals(beds, roomDto.beds) && Objects.equals(imageUrls, roomDto.imageUrls) && Objects.equals(description, roomDto.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, number, type, price, beds);
+        return Objects.hash(id, number, type, price, beds, imageUrls, description);
     }
 }

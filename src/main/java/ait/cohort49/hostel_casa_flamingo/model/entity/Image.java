@@ -28,6 +28,25 @@ public class Image {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    public Image() {
+    }
+
+    public Image(String s3Path, String fileOriginName, String s3BucketName, Bed bed) {
+        this.s3Path = s3Path;
+        this.fileOriginName = fileOriginName;
+        this.s3BucketName = s3BucketName;
+        this.bed = bed;
+        this.room = null;
+    }
+
+    public Image(String s3Path, String fileOriginName, String s3BucketName, Room room) {
+        this.s3Path = s3Path;
+        this.fileOriginName = fileOriginName;
+        this.s3BucketName = s3BucketName;
+        this.bed = null;
+        this.room = room;
+    }
+
     public Long getId() {
         return id;
     }

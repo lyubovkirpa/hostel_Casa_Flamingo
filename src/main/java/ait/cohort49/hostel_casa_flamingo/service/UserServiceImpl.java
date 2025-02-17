@@ -8,6 +8,7 @@ import ait.cohort49.hostel_casa_flamingo.repository.UserRepository;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.ConfirmationService;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.UserService;
 import ait.cohort49.hostel_casa_flamingo.service.mapping.UserMappingService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             return userMappingService.mapEntityToDto(user);
         } else {
-            throw new RestException("User for this confirmation code not found");
+            throw new RestException(HttpStatus.NOT_FOUND, "User for this confirmation code not found");
         }
     }
 }

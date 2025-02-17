@@ -3,6 +3,7 @@ package ait.cohort49.hostel_casa_flamingo.model.dto;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,7 +14,7 @@ public class CartDto {
     private Long id;
 
     @Schema(description = "List of bed items in the cart")
-    private List<CartItemBedDto> beds;
+    private List<CartItemBedDto> beds = new ArrayList<>();
 
     @Schema(description = "Count of beds in the cart", example = "2")
     private Long countBeds;

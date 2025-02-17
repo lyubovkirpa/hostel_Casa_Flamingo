@@ -11,8 +11,10 @@ public interface RoomMappingService {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "beds", ignore = true)
+    @Mapping(target = "images", ignore = true)
     Room mapDtoToEntity(CreateOrUpdateRoomDto roomDto);
 
     @Mapping(target = "price", ignore = true)
+    @Mapping(target = "imageUrls", ignore = true)
     RoomDto mapEntityToDto(Room entity);
 }

@@ -1,15 +1,12 @@
 package ait.cohort49.hostel_casa_flamingo.model.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
-
-@Schema(description = "Class that describes Bed")
-public class BedDto {
-
+public class AvailableBedDto {
     private Long id;
     private String number;
     private String type;
@@ -17,6 +14,7 @@ public class BedDto {
     private Long roomId;
     private List<String> imageUrls;
     public String description;
+    public boolean isAvailable;
 
     public Long getId() {
         return id;
@@ -74,12 +72,22 @@ public class BedDto {
         this.description = description;
     }
 
+    @JsonProperty("isAvailable")
+    public boolean isAvailable() {
+        return isAvailable;
+    }
+
+    @JsonProperty("isAvailable")
+    public void setAvailable(boolean available) {
+        isAvailable = available;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BedDto bedDto = (BedDto) o;
-        return Objects.equals(id, bedDto.id);
+        AvailableBedDto that = (AvailableBedDto) o;
+        return Objects.equals(id, that.id);
     }
 
     @Override
@@ -89,7 +97,7 @@ public class BedDto {
 
     @Override
     public String toString() {
-        return String.format("BedDto: id - %d, number - %s, type - %s, price - %s, roomId - %d, imageUrls - %s, description - %s",
-                id, number, type, price, roomId, imageUrls, description);
+        return String.format("AvailableBedDto: id - %d, number - %s, type - %s, price - %s, roomId - %d, imageUrls - %s, description - %s, isAvailable - %s",
+                id, number, type, price, roomId, imageUrls, description, isAvailable);
     }
 }

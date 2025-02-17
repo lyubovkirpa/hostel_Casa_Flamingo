@@ -51,7 +51,7 @@ public class MailTemplateService {
 
             return FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         } catch (IOException | TemplateException e) {
-            throw new RuntimeException("Ошибка при генерации email-шаблона", e);
+            throw new RuntimeException("Error while generating an email template", e);
         }
     }
 

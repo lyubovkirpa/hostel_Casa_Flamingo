@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -34,6 +35,20 @@ public class Bed {
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
+
+    @OneToMany(mappedBy = "bed", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Image> images;
+
+    @Column(name = "description")
+    private String description;
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 
     public Room getRoom() {
         return room;
@@ -71,6 +86,14 @@ public class Bed {
         this.price = price;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -86,7 +109,7 @@ public class Bed {
 
     @Override
     public String toString() {
-        return String.format("Bed: id - %d, number - %s, type - %s, price - %s",
-                id, number, type, price);
+        return String.format("Bed: id - %d, number - %s, type - %s, price - %s, description - %s, images - %s",
+                id, number, type, price, description, images);
     }
 }

@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 
 @Schema(description = "Class that describes Bed")
@@ -23,6 +24,10 @@ public class CreateBedDto {
     private BigDecimal price;
 
     private Long roomId;
+
+    private List<String> imageUrls;
+
+    private String description;
 
     public Long getRoomId() {
         return roomId;
@@ -56,10 +61,25 @@ public class CreateBedDto {
         this.price = price;
     }
 
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     @Override
     public String toString() {
-        return String.format("Bed: number - %s, type - %s, price - %s, roomId - %s",
-                number, type, price, roomId);
+        return String.format("Bed: number - %s, type - %s, price - %s, roomId - %s, description - %s, imageUrls - %s ",
+                number, type, price, roomId, imageUrls, description);
     }
 }
