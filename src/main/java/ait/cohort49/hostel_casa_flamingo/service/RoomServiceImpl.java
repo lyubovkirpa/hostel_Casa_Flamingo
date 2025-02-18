@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -85,6 +86,17 @@ public class RoomServiceImpl implements RoomService {
         return roomMappingService.mapEntityToDto(roomRepository.save(room));
     }
 
+    @Override
+    @Transactional
+    public RoomDto updateRoom(Long id, RoomDto requestDto) {
+        Room existingRoom = findByIdOrThrow(id);
+
+        existingRoom.setNumber(requestDto.getNumber());
+        existingRoom.setType(requestDto.getType());
+
+        Room savedRoom = roomRepository.save(existingRoom);
+        return roomMappingService.mapEntityToDto(savedRoom);
+    }
 
     @Override
     @Transactional
@@ -117,5 +129,4 @@ public class RoomServiceImpl implements RoomService {
                 .map(Bed::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
 }

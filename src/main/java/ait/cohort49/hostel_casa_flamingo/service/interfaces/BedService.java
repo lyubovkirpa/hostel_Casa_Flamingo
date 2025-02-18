@@ -18,6 +18,8 @@ public interface BedService {
 
     List<BedDto> getAllBeds();
 
+    BedDto updateBed(Long id, BedDto bedDto);
+
     void deleteBedById(Long id);
 
     void deleteBed(Bed bed);

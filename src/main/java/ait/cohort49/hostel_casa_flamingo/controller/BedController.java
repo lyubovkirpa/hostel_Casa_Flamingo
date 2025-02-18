@@ -104,6 +104,31 @@ public class BedController {
         return bedService.getAllBeds();
     }
 
+    @Operation(summary = "Update bed", description = "Update bed by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Bed updated",
+                    content = @Content
+            ),
+            @ApiResponse(responseCode = "401", description = "User not authenticated",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User not authenticated"))
+            ),
+            @ApiResponse(responseCode = "403", description = "User doesn't have rights",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class, example = "User doesn't have rights"))
+            ),
+            @ApiResponse(responseCode = "404", description = "Bed not found",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class,
+                                    example = "Bed not found"))
+            )
+    })
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public BedDto updateBed(@PathVariable Long id, @RequestBody BedDto bedDto) {
+        return bedService.updateBed(id, bedDto);
+    }
 
     @Operation(summary = "Delete bed", description = "Delete bed by ID")
     @ApiResponses(value = {
