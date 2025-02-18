@@ -16,10 +16,6 @@ public interface RoomService {
 
     RoomDto createRoom(CreateOrUpdateRoomDto roomDto);
 
-    RoomDto updateRoom(Long id);
-
-    Room update(Long id, Room updatedRoom);
-
     RoomDto updateRoom(Long id, RoomDto requestDto);
 
     void deleteRoom(Long id);

@@ -129,16 +129,4 @@ public class RoomServiceImpl implements RoomService {
                 .map(Bed::getPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-    @Override
-    public RoomDto updateRoom(Long id) {
-
-        return null;
-    }
-
-    @Override
-    public Room update(Long id, Room updatedRoom) {
-        return null;
-    }
-
 }
