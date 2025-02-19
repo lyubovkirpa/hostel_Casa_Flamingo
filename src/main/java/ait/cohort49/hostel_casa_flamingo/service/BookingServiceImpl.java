@@ -2,6 +2,7 @@ package ait.cohort49.hostel_casa_flamingo.service;
 
 import ait.cohort49.hostel_casa_flamingo.exception.RestException;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BookingDto;
+import ait.cohort49.hostel_casa_flamingo.model.dto.ImageInfoDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Booking;
 import ait.cohort49.hostel_casa_flamingo.model.entity.Cart;
 import ait.cohort49.hostel_casa_flamingo.model.entity.CartItemBed;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -26,17 +28,19 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMappingService bookingMappingService;
     private final BookingEmailService bookingEmailService;
     private final BedServiceImpl bedServiceImpl;
+    private final ImageServiceImpl imageService;
 
     public BookingServiceImpl(BookingRepository bookingRepository,
                               CartService cartService,
                               BookingMappingService bookingMappingService,
                               BookingEmailService bookingEmailService,
-                              BedServiceImpl bedServiceImpl) {
+                              BedServiceImpl bedServiceImpl, ImageServiceImpl imageService) {
         this.bookingRepository = bookingRepository;
         this.cartService = cartService;
         this.bookingMappingService = bookingMappingService;
         this.bookingEmailService = bookingEmailService;
         this.bedServiceImpl = bedServiceImpl;
+        this.imageService = imageService;
     }
 
     @Override
@@ -86,7 +90,19 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDto> getBooking(User authUser) {
         return bookingRepository.findAllByUser(authUser)
                 .stream()
-                .map(bookingMappingService::mapEntityToDto)
+                .map(booking -> {
+                    BookingDto bookingDto = bookingMappingService.mapEntityToDto(booking);
+
+                    if (booking.getBed() != null) {
+                        List<ImageInfoDto> images = imageService.getImagesByBed(booking.getBed().getId());
+                        List<String> imageUrls = images.stream()
+                                .map(ImageInfoDto::getImageUrl)
+                                .collect(Collectors.toList());
+
+                        bookingDto.getBed().setImageUrls(imageUrls);
+                    }
+                    return bookingDto;
+                })
                 .toList();
     }
 

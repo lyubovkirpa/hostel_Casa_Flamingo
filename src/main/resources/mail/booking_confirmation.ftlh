@@ -42,11 +42,19 @@
             padding-bottom: 10px;
         }
 
-        .booking img {
-            width: 100px;
-            height: 100px;
+        .booking_img {
+            width: 130px;
+            height: 130px;
             object-fit: cover;
             border-radius: 5px;
+        }
+
+        .booking_info {
+            padding-left: 15px;
+        }
+
+        .booking_info p {
+            margin: 10px 0;
         }
 
         .footer {
@@ -65,8 +73,8 @@
     <div class="details">
         <#list bookings as booking>
             <div class="booking">
-                <img src="${booking.imageUrl}" alt="Booking image">
-                <div>
+                <img class="booking_img" src="${booking.imageUrl}" alt="Booking image">
+                <div class="booking_info">
                     <p><strong>Booking number:</strong> ${booking.bookingNumber}</p>
                     <p><strong>Check-In:</strong> ${booking.entryDate}</p>
                     <p><strong>Check-out:</strong> ${booking.departureDate}</p>
