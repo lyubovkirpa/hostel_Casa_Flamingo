@@ -50,7 +50,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     public List<RoomDto> getAllRooms() {
-        return roomRepository.findAll()
+        return roomRepository.findAllSortedByRoomNumber()
                 .stream()
                 .map(this::mapBedToDtoWithImagesForRoom)
                 .toList();
