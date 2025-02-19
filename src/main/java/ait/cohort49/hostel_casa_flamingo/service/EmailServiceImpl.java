@@ -3,6 +3,7 @@ package ait.cohort49.hostel_casa_flamingo.service;
 import ait.cohort49.hostel_casa_flamingo.model.dto.BookingDto;
 import ait.cohort49.hostel_casa_flamingo.model.entity.User;
 import ait.cohort49.hostel_casa_flamingo.service.interfaces.EmailService;
+import ait.cohort49.hostel_casa_flamingo.service.interfaces.ImageService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
     private final MailTemplateService mailTemplateService;
+    private final ImageService imageService;
 
     @Value("${mail.username}")
     private String fromAddress;
@@ -26,9 +28,10 @@ public class EmailServiceImpl implements EmailService {
     @Value("${base-url}")
     private String baseUrl;
 
-    public EmailServiceImpl(JavaMailSender mailSender, MailTemplateService mailTemplateService) {
+    public EmailServiceImpl(JavaMailSender mailSender, MailTemplateService mailTemplateService, ImageService imageService) {
         this.mailSender = mailSender;
         this.mailTemplateService = mailTemplateService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -61,8 +64,13 @@ public class EmailServiceImpl implements EmailService {
             throw new IllegalArgumentException("User email cannot be null or empty");
         }
 
-        //todo удалить когда будут реальные изображения
-        List<BookingDto> list = bookings.stream().peek(b -> b.setImageUrl("https://picsum.photos/400/300")).toList();
+        List<BookingDto> list = bookings.stream()
+                .peek(b -> imageService.getImagesByBed(b.getBed().getId())
+                        .stream()
+                        .findFirst()
+                        .ifPresent(bedImageInfo -> b.setImageUrl(bedImageInfo.getImageUrl())))
+                .toList();
+
         String emailText = mailTemplateService.generateBookingConfirmationEmail(user, list);
 
         try {
